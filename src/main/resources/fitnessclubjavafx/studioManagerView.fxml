@@ -212,7 +212,7 @@
                       <Label style="-fx-font-weight: bold;" text="Last Name:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
                       <TextField fx:id="lastNameMemberClass" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                       <Label prefWidth="177.0" style="-fx-font-weight: bold;" text="Date of Birth:" GridPane.columnIndex="0" GridPane.rowIndex="5" />
-                      <DatePicker fx:id="dobMemberClass" prefHeight="25.0" prefWidth="177.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                      <DatePicker fx:id="dobMemberClass" editable="false" prefHeight="25.0" prefWidth="177.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                       <Button fx:id="AddMemberToClassButton" onAction="#onAddMemberToClassButtonClick" prefHeight="25.0" prefWidth="194.0" text="Add Member to Class" textFill="#e64518" GridPane.columnIndex="0" GridPane.rowIndex="6">
                         <font>
                            <Font name="Bell MT Bold" size="12.0" />

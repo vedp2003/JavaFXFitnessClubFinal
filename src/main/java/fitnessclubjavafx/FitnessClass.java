@@ -118,9 +118,10 @@ public class FitnessClass {
      * Removes a guest from the fitness class.
      *
      * @param guest The guest to remove.
+     * @return true if removal is successful; false otherwise
      */
-    public void removeGuest(Member guest) {
-        this.guests.remove(guest);
+    public boolean removeGuest(Member guest) {
+        return this.guests.remove(guest);
     }
 
     /**

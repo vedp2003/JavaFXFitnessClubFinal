@@ -163,8 +163,6 @@ public class StudioManagerController {
         ObservableList<Location> locations = FXCollections.observableArrayList(Location.values());
         tableLocations.setItems(locations);
 
-
-
         col_instructor_name.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue()));
 
         ObservableList<String> instructors = FXCollections.observableArrayList("JENNIFER", "KIM", "DENISE", "DAVIS", "EMMA");
@@ -337,6 +335,10 @@ public class StudioManagerController {
 
     @FXML
     protected void onAddMemberToClassButtonClick() {
+        if(!LoadClasses_ID.isDisabled()) {
+            outputTextAreaClass.appendText("Load the Classes Before Adding Member to Class!\n");
+            return;
+        }
         String classString = classTypeMemberClass.getValue();
         String instructorString = instructorMemberClass.getValue();
         String studioString = locationMemberClass.getValue();
@@ -368,6 +370,10 @@ public class StudioManagerController {
 
     @FXML
     protected void onAddGuestToClassButtonClick() {
+        if(!LoadClasses_ID.isDisabled()) {
+            outputTextAreaClass.appendText("Load the Classes Before Adding Guests to Class!\n");
+            return;
+        }
         String classString = classTypeMemberClass.getValue();
         String instructorString = instructorMemberClass.getValue();
         String studioString = locationMemberClass.getValue();
@@ -399,6 +405,10 @@ public class StudioManagerController {
 
     @FXML
     protected void onRemoveMemberFromClassButtonClick() {
+        if(!LoadClasses_ID.isDisabled()) {
+            outputTextAreaClass.appendText("Load the Classes Before!\n");
+            return;
+        }
         String classString = classTypeMemberClass.getValue();
         String instructorString = instructorMemberClass.getValue();
         String studioString = locationMemberClass.getValue();
@@ -431,6 +441,10 @@ public class StudioManagerController {
 
     @FXML
     protected void onRemoveGuestFromClassButtonClick() {
+        if(!LoadClasses_ID.isDisabled()) {
+            outputTextAreaClass.appendText("Load the Classes Before!\n");
+            return;
+        }
         String classString = classTypeMemberClass.getValue();
         String instructorString = instructorMemberClass.getValue();
         String studioString = locationMemberClass.getValue();
@@ -740,10 +754,6 @@ public class StudioManagerController {
      *              from the command line argument
      */
     private void memberClassAttendance(String[] parts) {
-        if(!LoadClasses_ID.isDisabled()) {
-            outputTextAreaClass.appendText("Load the Classes Before Adding Member to Class!\n");
-            return;
-        }
 
         String classString = parts[MEMBER_GUEST_CLASS_TYPE_INDEX];
         String instructorString = parts[MEMBER_GUEST_CLASS_INSTRUCTOR_INDEX];
@@ -929,10 +939,6 @@ public class StudioManagerController {
      *              from the command line argument
      */
     private void guestClassAttendance(String[] parts) {
-        if(!LoadClasses_ID.isDisabled()) {
-            outputTextAreaClass.appendText("Load the Classes Before Adding Member to Class!\n");
-            return;
-        }
 
         String classString = parts[MEMBER_GUEST_CLASS_TYPE_INDEX];
         String instructorString = parts[MEMBER_GUEST_CLASS_INSTRUCTOR_INDEX];
@@ -1032,6 +1038,8 @@ public class StudioManagerController {
         Date dob = new Date(parts[MEMBER_GUEST_DOB_INDEX]);
         Profile profile = new Profile(firstName, lastName, dob);
         Member unregisterGuest = memberList.getMemberFromProfile(profile);
+
+
         Offer classType;
         try {
             classType = Offer.valueOf(classString.toUpperCase());
@@ -1039,20 +1047,29 @@ public class StudioManagerController {
             outputTextAreaClass.appendText(classString + " - class name does not exist.\n");
             return;
         }
+
         for (FitnessClass fitnessClass : schedule.getClasses()) {
             if (fitnessClass.equals(schedule.findClass(classType, instructor, studio))) {
-                fitnessClass.removeGuest(unregisterGuest);
-                if (unregisterGuest instanceof Premium) {
-                    ((Premium) unregisterGuest).addGuestPass();
+                boolean removed = fitnessClass.removeGuest(unregisterGuest);
+                if(removed) {
+                    if (unregisterGuest instanceof Premium) {
+                        ((Premium) unregisterGuest).addGuestPass();
+                    }
+                    if (unregisterGuest instanceof Family) {
+                        ((Family) unregisterGuest).setGuest(true);
+                    }
+                    outputTextAreaClass.appendText(unregisterGuest.getProfile().getFname() + " " +
+                            unregisterGuest.getProfile().getLname() + " (guest) is removed from " +
+                            fitnessClass.getInstructor() + ", " + fitnessClass.getTime() + ", " +
+                            fitnessClass.getStudio() + "\n");
+                    return;
                 }
-                if (unregisterGuest instanceof Family) {
-                    ((Family) unregisterGuest).setGuest(true);
+                else {
+                    outputTextAreaClass.appendText(profile.getFname() + " " +
+                            profile.getLname() + " is not in " +
+                            fitnessClass.getInstructor() + ", " + fitnessClass.getTime() +
+                            ", " + fitnessClass.getStudio() + "\n");
                 }
-                outputTextAreaClass.appendText(unregisterGuest.getProfile().getFname() + " " +
-                        unregisterGuest.getProfile().getLname() + " (guest) is removed from " +
-                        fitnessClass.getInstructor() + ", " + fitnessClass.getTime() + ", " +
-                        fitnessClass.getStudio() + "\n");
-                return;
             }
         }
     }
