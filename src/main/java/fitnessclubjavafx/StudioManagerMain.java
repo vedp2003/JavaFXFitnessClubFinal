@@ -13,7 +13,7 @@ public class StudioManagerMain extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(StudioManagerMain.class.getResource("studioManagerView.fxml"));
         Scene scene = null;
         try {
-            scene = new Scene(fxmlLoader.load(), 440, 600);
+            scene = new Scene(fxmlLoader.load(), 610, 600);
         } catch ( IOException e ) {
             throw new RuntimeException(e);
         }

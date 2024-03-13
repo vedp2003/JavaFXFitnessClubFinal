@@ -111,7 +111,8 @@ public class FitnessClass {
      * @param guest The guest to add.
      */
     public void addGuest(Member guest) {
-        this.guests.add(guest);
+        this.guests.addGuest(guest);
+        //this.guests.add(guest);
     }
 
     /**

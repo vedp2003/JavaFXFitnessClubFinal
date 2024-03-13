@@ -148,6 +148,19 @@ public class MemberList {
     }
 
     /**
+     * Adds a new guest to the list of guests
+     *
+     * @param guest the guest to add
+-     */
+    public void addGuest(Member guest) {
+        if (size == members.length) {
+            grow();
+        }
+        members[size] = guest;
+        size++;
+    }
+
+    /**
      * Removes a member from the list of members.
      * Maintains the relative order of the events in the array after the deletion
      *
@@ -253,7 +266,7 @@ public class MemberList {
      * @return a String array with members and their bill amounts
      */
     public String[] printFees() {
-        String[] feesArray = new String[members.length];
+        String[] feesArray = new String[size];
         int i = 0;
         for (Member member : members) {
             if (member != null) {

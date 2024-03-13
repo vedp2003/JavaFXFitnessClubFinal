@@ -743,7 +743,7 @@ public class StudioManagerController {
                 }
             }
         }
-        outputTextAreaPrint.appendText("-end of class list.\n");
+        outputTextAreaPrint.appendText("-end of class list.\n\n");
     }
 
     /**
@@ -993,6 +993,7 @@ public class StudioManagerController {
                 fitnessClass.addGuest(member);
                 if (member instanceof Premium) {
                     ((Premium) member).useGuestPass();
+                    outputTextAreaClass.appendText(((Premium) member).getGuestPass() + " PASSES\n");
                 }
                 if (member instanceof Family) {
                     ((Family) member).setGuest(false);
@@ -1014,18 +1015,6 @@ public class StudioManagerController {
      */
     private void removeGuestFromClass(String[] parts) {
 
-        //fixxx coDEEE
-        //1) Before loading classes, Press remove Guest From Class with the member not added yet
-        //2) After loading classes, Press remove Guest From Class with the member not added yet
-        //3) After adding member, press remove member from class does nothing
-        //4) Once member is added and then added to class, remove guest from class still removes a guest even tho no guests have been added
-        //5) If member is deleted (remove member from class), then clicking add Guest to Class gives me (guest is attending class message)
-        //6) If guests are added for a member added to a class, it doesnt display this & it lets u keep pressing Add/Remove Guest
-        //3) Add member before Loading Members - it doesnt save the member added before since load member creates new MemberList
-        //4) Print Members with Fees - prints 4 null values by default - why??
-        //5) When u add a member and then add the member/their guests to class AND then remove the member, the member/guests are still displayed in the class display
-
-
         if (parts.length != ADD_REMOVE_CLASS_INPUT_MAX) {
             outputTextAreaClass.appendText("Missing data tokens.\n");
             return;
@@ -1037,8 +1026,13 @@ public class StudioManagerController {
         String lastName = parts[MEMBER_GUEST_LAST_NAME_INDEX];
         Date dob = new Date(parts[MEMBER_GUEST_DOB_INDEX]);
         Profile profile = new Profile(firstName, lastName, dob);
-        Member unregisterGuest = memberList.getMemberFromProfile(profile);
-
+        Member unregisterGuest = null;
+        if (memberList.getMemberFromProfile(profile) != null) {
+            unregisterGuest = memberList.getMemberFromProfile(profile);
+        } else {
+            outputTextAreaClass.appendText(firstName + " " + lastName + " " + dob + " is not in the member database.\n");
+            return;
+        }
 
         Offer classType;
         try {
@@ -1054,6 +1048,8 @@ public class StudioManagerController {
                 if(removed) {
                     if (unregisterGuest instanceof Premium) {
                         ((Premium) unregisterGuest).addGuestPass();
+                        outputTextAreaClass.appendText(((Premium) unregisterGuest).getGuestPass() + " PASSES\n");
+
                     }
                     if (unregisterGuest instanceof Family) {
                         ((Family) unregisterGuest).setGuest(true);
@@ -1066,7 +1062,7 @@ public class StudioManagerController {
                 }
                 else {
                     outputTextAreaClass.appendText(profile.getFname() + " " +
-                            profile.getLname() + " is not in " +
+                            profile.getLname() + " (guest) is not in " +
                             fitnessClass.getInstructor() + ", " + fitnessClass.getTime() +
                             ", " + fitnessClass.getStudio() + "\n");
                 }
