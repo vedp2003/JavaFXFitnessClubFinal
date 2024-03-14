@@ -4,8 +4,16 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Button;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TableColumn;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,13 +21,13 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 /**
- * This is the user interface class that processes the input and output of data
+ * This is controller for the Studio Manager GUI.
+ * Allows for user inputs to manage the fitness club functionalities.
+ * Handles onClick functionalities for GUI Nodes/Buttons
  *
  * @author Ved Patel, Vivek Manthri
  */
 public class StudioManagerController {
-    public static final int CANCEL_MEMBERSHIP_INPUT_MAX = 4;
-    public static final int ADD_REMOVE_CLASS_INPUT_MAX = 7;
     public static final int ADD_CANCEL_MEMBERSHIP_FIRST_NAME_INDEX = 1;
     public static final int ADD_CANCEL_MEMBERSHIP_LAST_NAME_INDEX = 2;
     public static final int ADD_CANCEL_MEMBERSHIP_DOB_INDEX = 3;
@@ -104,7 +112,6 @@ public class StudioManagerController {
     @FXML
     private TableColumn<String, String> col_class_type;
 
-
     /**
      * Default constructor/no-argument constructor
      */
@@ -113,49 +120,15 @@ public class StudioManagerController {
         schedule = new Schedule();
     }
 
+    /**
+     * Initializes the controller, sets up the TableView contents, and calls input restrict method at the start
+     */
     @FXML
     public void initialize() {
         membershipToggleGroup = new ToggleGroup();
         basic.setToggleGroup(membershipToggleGroup);
         family.setToggleGroup(membershipToggleGroup);
         premium.setToggleGroup(membershipToggleGroup);
-
-        FName_Text.addEventFilter(KeyEvent.KEY_TYPED, keyEvent -> {
-            String typedChar = keyEvent.getCharacter();
-            if(!typedChar.matches("[a-zA-Z]")) {
-                keyEvent.consume();
-            }
-        });
-        LName_Text.addEventFilter(KeyEvent.KEY_TYPED, keyEvent -> {
-            String typedChar = keyEvent.getCharacter();
-            if(!typedChar.matches("[a-zA-Z]")) {
-                keyEvent.consume();
-            }
-        });
-        FName_Cancel.addEventFilter(KeyEvent.KEY_TYPED, keyEvent -> {
-            String typedChar = keyEvent.getCharacter();
-            if(!typedChar.matches("[a-zA-Z]")) {
-                keyEvent.consume();
-            }
-        });
-        LName_Cancel.addEventFilter(KeyEvent.KEY_TYPED, keyEvent -> {
-            String typedChar = keyEvent.getCharacter();
-            if(!typedChar.matches("[a-zA-Z]")) {
-                keyEvent.consume();
-            }
-        });
-        firstNameMemberClass.addEventFilter(KeyEvent.KEY_TYPED, keyEvent -> {
-            String typedChar = keyEvent.getCharacter();
-            if(!typedChar.matches("[a-zA-Z]")) {
-                keyEvent.consume();
-            }
-        });
-        lastNameMemberClass.addEventFilter(KeyEvent.KEY_TYPED, keyEvent -> {
-            String typedChar = keyEvent.getCharacter();
-            if(!typedChar.matches("[a-zA-Z]")) {
-                keyEvent.consume();
-            }
-        });
 
         col_city.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().name()));
         col_county.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getCounty()));
@@ -173,18 +146,58 @@ public class StudioManagerController {
         ObservableList<String> classTypes = FXCollections.observableArrayList("PILATES", "SPINNING", "CARDIO");
         tableClassTypes.setItems(classTypes);
 
+        characterInputRestrict();
+
     }
 
+    /**
+     * Helper method to restrict the inputs of text fields to just alphabetical characters
+     */
+    private void characterInputRestrict() {
+        FName_Text.addEventFilter(KeyEvent.KEY_TYPED, keyEvent -> {
+            String typedChar = keyEvent.getCharacter();
+            if (!typedChar.matches("[a-zA-Z]")) {
+                keyEvent.consume();
+            }
+        });
+        LName_Text.addEventFilter(KeyEvent.KEY_TYPED, keyEvent -> {
+            String typedChar = keyEvent.getCharacter();
+            if (!typedChar.matches("[a-zA-Z]")) {
+                keyEvent.consume();
+            }
+        });
+        FName_Cancel.addEventFilter(KeyEvent.KEY_TYPED, keyEvent -> {
+            String typedChar = keyEvent.getCharacter();
+            if (!typedChar.matches("[a-zA-Z]")) {
+                keyEvent.consume();
+            }
+        });
+        LName_Cancel.addEventFilter(KeyEvent.KEY_TYPED, keyEvent -> {
+            String typedChar = keyEvent.getCharacter();
+            if (!typedChar.matches("[a-zA-Z]")) {
+                keyEvent.consume();
+            }
+        });
+        firstNameMemberClass.addEventFilter(KeyEvent.KEY_TYPED, keyEvent -> {
+            String typedChar = keyEvent.getCharacter();
+            if (!typedChar.matches("[a-zA-Z]")) {
+                keyEvent.consume();
+            }
+        });
+        lastNameMemberClass.addEventFilter(KeyEvent.KEY_TYPED, keyEvent -> {
+            String typedChar = keyEvent.getCharacter();
+            if (!typedChar.matches("[a-zA-Z]")) {
+                keyEvent.consume();
+            }
+        });
+    }
+
+    /**
+     * Displays all the members in the list sorted by their profiles upon button click.
+     */
     @FXML
     protected void onPrintByMemberButtonClick() {
-        boolean emptyMemberChecker = true;
-        for (Member member : memberList.getMembers()) {
-            if (member != null) {
-                emptyMemberChecker = false;
-                break;
-            }
-        }
-        if (!emptyMemberChecker) {
+        if (memberList.getSize() != 0) {
             outputTextAreaPrint.appendText("\n-list of members sorted by member profiles-\n");
             memberList.printByMember();
             for (Member member : memberList.getMembers()) {
@@ -198,16 +211,12 @@ public class StudioManagerController {
         }
     }
 
+    /**
+     * Displays all the members in the list sorted by county/zip code upon button click.
+     */
     @FXML
     protected void onPrintByCountyButtonClick() {
-        boolean emptyMemberChecker = true;
-        for (Member member : memberList.getMembers()) {
-            if (member != null) {
-                emptyMemberChecker = false;
-                break;
-            }
-        }
-        if (!emptyMemberChecker) {
+        if (memberList.getSize() != 0) {
             outputTextAreaPrint.appendText("-list of members sorted by county then zipcode-\n");
             memberList.printByCounty();
             for (Member member : memberList.getMembers()) {
@@ -221,17 +230,12 @@ public class StudioManagerController {
         }
     }
 
+    /**
+     * Displays all the members with their next bill due amounts upon button click.
+     */
     @FXML
     protected void onPrintByFeeButtonClick() {
-
-        boolean emptyMemberChecker = true;
-        for (Member member : memberList.getMembers()) {
-            if (member != null) {
-                emptyMemberChecker = false;
-                break;
-            }
-        }
-        if (!emptyMemberChecker) {
+        if (memberList.getSize() != 0) {
             outputTextAreaPrint.appendText("\n-list of members with next dues-\n");
             String[] feesArray = memberList.printFees();
 
@@ -246,27 +250,25 @@ public class StudioManagerController {
 
     }
 
+    /**
+     * Displays the class schedule with current attendees upon button click.
+     */
     @FXML
     protected void onDisplayScheduleButtonClick() {
-        boolean emptyClassChecker = true;
-        for (FitnessClass fitnessClass : schedule.getClasses()) {
-            if (fitnessClass != null) {
-                emptyClassChecker = false;
-                break;
-            }
-        }
-        if (!emptyClassChecker) {
+        if (schedule.getNumClasses() != 0) {
             displayClassSchedule();
         } else {
             outputTextAreaPrint.appendText("No Classes Found - Need to Load Classes\n");
         }
     }
 
+    /**
+     * Allows and calls another method for the addition of a member to the club upon button click.
+     * Ensures all necessary user inputs are inputted before adding the member to the system.
+     */
     @FXML
     protected void onAddMemberButtonClick() {
-        //ASK - if data fields are empty and this button is clicked, can we display Load members first Or do we have to
-        //      say that Missing Data Tokens
-        if(!loadMemberButton.isDisabled()) {
+        if (!loadMemberButton.isDisabled()) {
             outputTextArea.appendText("Load the Members Before Adding a Member!\n");
             return;
         }
@@ -278,7 +280,6 @@ public class StudioManagerController {
             return;
         }
         String formattedDate = dateOfBirth.format(DateTimeFormatter.ofPattern("MM/dd/yyyy"));
-
         String membershipType = "";
         if (basic.isSelected()) {
             membershipType = "Basic";
@@ -303,7 +304,17 @@ public class StudioManagerController {
                 return;
             }
         }
+        addMemberBasedOnType(parts, membershipType);
+    }
 
+    /**
+     * Helper method that calls proper add member methods based on the input membership type
+     *
+     * @param parts          an array of strings, where each element represents a specific piece of information
+     *                       from the user
+     * @param membershipType the string representing the type of membership
+     */
+    private void addMemberBasedOnType(String[] parts, String membershipType) {
         if (membershipType.equals("Basic")) {
             addBasicMember(parts);
         }
@@ -315,10 +326,13 @@ public class StudioManagerController {
         }
     }
 
+    /**
+     * Prints all the fitness classes from classSchedule.txt upon button click.
+     * Sets the button to gray once the task is completed.
+     */
     @FXML
     protected void onLoadClassesButtonClick() {
         try {
-
             schedule = new Schedule();
             schedule.load(new File("classSchedule.txt"));
             outputTextAreaClass.appendText("-Fitness classes loaded-\n");
@@ -330,176 +344,11 @@ public class StudioManagerController {
         } catch (IOException e) {
             outputTextAreaClass.setText("ERROR LOADING FILE\n\n");
         }
-
-    }
-
-    @FXML
-    protected void onAddMemberToClassButtonClick() {
-        if(!LoadClasses_ID.isDisabled()) {
-            outputTextAreaClass.appendText("Load the Classes Before Adding Member to Class!\n");
-            return;
-        }
-        String classString = classTypeMemberClass.getValue();
-        String instructorString = instructorMemberClass.getValue();
-        String studioString = locationMemberClass.getValue();
-        String firstName = firstNameMemberClass.getText().trim();
-        String lastName = lastNameMemberClass.getText().trim();
-        LocalDate dateOfBirth = dobMemberClass.getValue();
-        if (dateOfBirth == null) {
-            outputTextAreaClass.appendText("Missing data tokens. Fill all required fields.\n");
-            return;
-        }
-        String formattedDate = dateOfBirth.format(DateTimeFormatter.ofPattern("MM/dd/yyyy"));
-
-        String[] parts = new String[7];
-        parts[1] = classString;
-        parts[2] = instructorString;
-        parts[3] = studioString;
-        parts[4] = firstName;
-        parts[5] = lastName;
-        parts[6] = formattedDate;
-        for (int i = 1; i < parts.length; i++) {
-            if (parts[i] == null || parts[i].trim().isEmpty()) {
-                outputTextAreaClass.appendText("Missing data tokens. Fill all required fields.\n");
-                return;
-            }
-        }
-        memberClassAttendance(parts);
-
-    }
-
-    @FXML
-    protected void onAddGuestToClassButtonClick() {
-        if(!LoadClasses_ID.isDisabled()) {
-            outputTextAreaClass.appendText("Load the Classes Before Adding Guests to Class!\n");
-            return;
-        }
-        String classString = classTypeMemberClass.getValue();
-        String instructorString = instructorMemberClass.getValue();
-        String studioString = locationMemberClass.getValue();
-        String firstName = firstNameMemberClass.getText().trim();
-        String lastName = lastNameMemberClass.getText().trim();
-        LocalDate dateOfBirth = dobMemberClass.getValue();
-        if (dateOfBirth == null) {
-            outputTextAreaClass.appendText("Missing data tokens. Fill all required fields.\n");
-            return;
-        }
-        String formattedDate = dateOfBirth.format(DateTimeFormatter.ofPattern("MM/dd/yyyy"));
-
-        String[] parts = new String[7];
-        parts[1] = classString;
-        parts[2] = instructorString;
-        parts[3] = studioString;
-        parts[4] = firstName;
-        parts[5] = lastName;
-        parts[6] = formattedDate;
-        for (int i = 1; i < parts.length; i++) {
-            if (parts[i] == null || parts[i].trim().isEmpty()) {
-                outputTextAreaClass.appendText("Missing data tokens. Fill all required fields.\n");
-                return;
-            }
-        }
-        guestClassAttendance(parts);
-
-    }
-
-    @FXML
-    protected void onRemoveMemberFromClassButtonClick() {
-        if(!LoadClasses_ID.isDisabled()) {
-            outputTextAreaClass.appendText("Load the Classes Before!\n");
-            return;
-        }
-        String classString = classTypeMemberClass.getValue();
-        String instructorString = instructorMemberClass.getValue();
-        String studioString = locationMemberClass.getValue();
-        String firstName = firstNameMemberClass.getText().trim();
-        String lastName = lastNameMemberClass.getText().trim();
-        LocalDate dateOfBirth = dobMemberClass.getValue();
-        if (dateOfBirth == null) {
-            outputTextAreaClass.appendText("Missing data tokens. Fill all required fields.\n");
-            return;
-        }
-        String formattedDate = dateOfBirth.format(DateTimeFormatter.ofPattern("MM/dd/yyyy"));
-
-        String[] parts = new String[7];
-        parts[1] = classString;
-        parts[2] = instructorString;
-        parts[3] = studioString;
-        parts[4] = firstName;
-        parts[5] = lastName;
-        parts[6] = formattedDate;
-
-        for (int i = 1; i < parts.length; i++) {
-            if (parts[i] == null || parts[i].trim().isEmpty()) {
-                outputTextAreaClass.appendText("Missing data tokens. Fill all required fields.\n");
-                return;
-            }
-        }
-        removeMemberFromClass(parts);
-
-    }
-
-    @FXML
-    protected void onRemoveGuestFromClassButtonClick() {
-        if(!LoadClasses_ID.isDisabled()) {
-            outputTextAreaClass.appendText("Load the Classes Before!\n");
-            return;
-        }
-        String classString = classTypeMemberClass.getValue();
-        String instructorString = instructorMemberClass.getValue();
-        String studioString = locationMemberClass.getValue();
-        String firstName = firstNameMemberClass.getText().trim();
-        String lastName = lastNameMemberClass.getText().trim();
-        LocalDate dateOfBirth = dobMemberClass.getValue();
-        if (dateOfBirth == null) {
-            outputTextAreaClass.appendText("Missing data tokens. Fill all required fields.\n");
-            return;
-        }
-        String formattedDate = dateOfBirth.format(DateTimeFormatter.ofPattern("MM/dd/yyyy"));
-
-        String[] parts = new String[7];
-        parts[1] = classString;
-        parts[2] = instructorString;
-        parts[3] = studioString;
-        parts[4] = firstName;
-        parts[5] = lastName;
-        parts[6] = formattedDate;
-
-        for (int i = 1; i < parts.length; i++) {
-            if (parts[i] == null || parts[i].trim().isEmpty()) {
-                outputTextAreaClass.appendText("Missing data tokens. Fill all required fields.\n");
-                return;
-            }
-        }
-        removeGuestFromClass(parts);
-
-    }
-
-    @FXML
-    protected void onCancelButtonClick() {
-        String firstName = FName_Cancel.getText().trim();
-        String lastName = LName_Cancel.getText().trim();
-        LocalDate dateOfBirth = DOB_Cancel.getValue();
-        if (dateOfBirth == null) {
-            outputTextAreaCancel.appendText("Missing data tokens. Fill all required fields.\n");
-            return;
-        }
-        String formattedDate = dateOfBirth.format(DateTimeFormatter.ofPattern("MM/dd/yyyy"));
-        String[] parts = new String[4];
-        parts[1] = firstName;
-        parts[2] = lastName;
-        parts[3] = formattedDate;
-        for (int i = 1; i < parts.length; i++) {
-            if (parts[i] == null || parts[i].trim().isEmpty()) {
-                outputTextAreaCancel.appendText("Missing data tokens. Fill all required fields.\n");
-                return;
-            }
-        }
-        cancelMembership(parts);
     }
 
     /**
-     * Loads members from memberList.txt and adds members to the list
+     * Prints all the members from memberList.txt upon button click.
+     * Sets the button to gray once the task is completed.
      */
     @FXML
     protected void onLoadMembersButtonClick() {
@@ -537,27 +386,201 @@ public class StudioManagerController {
     }
 
     /**
+     * Allows and calls another method for the addition of a member to a fitness class upon button click.
+     * Ensures all necessary user inputs are inputted before adding the member to the class.
+     */
+    @FXML
+    protected void onAddMemberToClassButtonClick() {
+        if (!LoadClasses_ID.isDisabled()) {
+            outputTextAreaClass.appendText("Load the Classes Before Adding Member to Class!\n");
+            return;
+        }
+        String classString = classTypeMemberClass.getValue();
+        String instructorString = instructorMemberClass.getValue();
+        String studioString = locationMemberClass.getValue();
+        String firstName = firstNameMemberClass.getText().trim();
+        String lastName = lastNameMemberClass.getText().trim();
+        LocalDate dateOfBirth = dobMemberClass.getValue();
+        if (dateOfBirth == null) {
+            outputTextAreaClass.appendText("Missing data tokens. Fill all required fields.\n");
+            return;
+        }
+        String formattedDate = dateOfBirth.format(DateTimeFormatter.ofPattern("MM/dd/yyyy"));
+
+        String[] parts = new String[7];
+        parts[1] = classString;
+        parts[2] = instructorString;
+        parts[3] = studioString;
+        parts[4] = firstName;
+        parts[5] = lastName;
+        parts[6] = formattedDate;
+        for (int i = 1; i < parts.length; i++) {
+            if (parts[i] == null || parts[i].trim().isEmpty()) {
+                outputTextAreaClass.appendText("Missing data tokens. Fill all required fields.\n");
+                return;
+            }
+        }
+        memberClassAttendance(parts);
+    }
+
+    /**
+     * Allows and calls another method for the addition of a guest to a fitness class upon button click.
+     * Ensures all necessary user inputs are inputted before adding the guest to the class.
+     */
+    @FXML
+    protected void onAddGuestToClassButtonClick() {
+        if (!LoadClasses_ID.isDisabled()) {
+            outputTextAreaClass.appendText("Load the Classes Before Adding Guests to Class!\n");
+            return;
+        }
+        String classString = classTypeMemberClass.getValue();
+        String instructorString = instructorMemberClass.getValue();
+        String studioString = locationMemberClass.getValue();
+        String firstName = firstNameMemberClass.getText().trim();
+        String lastName = lastNameMemberClass.getText().trim();
+        LocalDate dateOfBirth = dobMemberClass.getValue();
+        if (dateOfBirth == null) {
+            outputTextAreaClass.appendText("Missing data tokens. Fill all required fields.\n");
+            return;
+        }
+        String formattedDate = dateOfBirth.format(DateTimeFormatter.ofPattern("MM/dd/yyyy"));
+
+        String[] parts = new String[7];
+        parts[1] = classString;
+        parts[2] = instructorString;
+        parts[3] = studioString;
+        parts[4] = firstName;
+        parts[5] = lastName;
+        parts[6] = formattedDate;
+        for (int i = 1; i < parts.length; i++) {
+            if (parts[i] == null || parts[i].trim().isEmpty()) {
+                outputTextAreaClass.appendText("Missing data tokens. Fill all required fields.\n");
+                return;
+            }
+        }
+        guestClassAttendance(parts);
+    }
+
+    /**
+     * Allows and calls another method for the removal of a member from a fitness class upon button click.
+     * Ensures all necessary user inputs are inputted before removing the member from the class.
+     */
+    @FXML
+    protected void onRemoveMemberFromClassButtonClick() {
+        if (!LoadClasses_ID.isDisabled()) {
+            outputTextAreaClass.appendText("Load the Classes Before!\n");
+            return;
+        }
+        String classString = classTypeMemberClass.getValue();
+        String instructorString = instructorMemberClass.getValue();
+        String studioString = locationMemberClass.getValue();
+        String firstName = firstNameMemberClass.getText().trim();
+        String lastName = lastNameMemberClass.getText().trim();
+        LocalDate dateOfBirth = dobMemberClass.getValue();
+        if (dateOfBirth == null) {
+            outputTextAreaClass.appendText("Missing data tokens. Fill all required fields.\n");
+            return;
+        }
+        String formattedDate = dateOfBirth.format(DateTimeFormatter.ofPattern("MM/dd/yyyy"));
+
+        String[] parts = new String[7];
+        parts[1] = classString;
+        parts[2] = instructorString;
+        parts[3] = studioString;
+        parts[4] = firstName;
+        parts[5] = lastName;
+        parts[6] = formattedDate;
+
+        for (int i = 1; i < parts.length; i++) {
+            if (parts[i] == null || parts[i].trim().isEmpty()) {
+                outputTextAreaClass.appendText("Missing data tokens. Fill all required fields.\n");
+                return;
+            }
+        }
+        removeMemberFromClass(parts);
+    }
+
+    /**
+     * Allows and calls another method for the removal of a guest from a fitness class upon button click.
+     * Ensures all necessary user inputs are inputted before removing the guest from the class.
+     */
+    @FXML
+    protected void onRemoveGuestFromClassButtonClick() {
+        if (!LoadClasses_ID.isDisabled()) {
+            outputTextAreaClass.appendText("Load the Classes Before!\n");
+            return;
+        }
+        String classString = classTypeMemberClass.getValue();
+        String instructorString = instructorMemberClass.getValue();
+        String studioString = locationMemberClass.getValue();
+        String firstName = firstNameMemberClass.getText().trim();
+        String lastName = lastNameMemberClass.getText().trim();
+        LocalDate dateOfBirth = dobMemberClass.getValue();
+        if (dateOfBirth == null) {
+            outputTextAreaClass.appendText("Missing data tokens. Fill all required fields.\n");
+            return;
+        }
+        String formattedDate = dateOfBirth.format(DateTimeFormatter.ofPattern("MM/dd/yyyy"));
+
+        String[] parts = new String[7];
+        parts[1] = classString;
+        parts[2] = instructorString;
+        parts[3] = studioString;
+        parts[4] = firstName;
+        parts[5] = lastName;
+        parts[6] = formattedDate;
+
+        for (int i = 1; i < parts.length; i++) {
+            if (parts[i] == null || parts[i].trim().isEmpty()) {
+                outputTextAreaClass.appendText("Missing data tokens. Fill all required fields.\n");
+                return;
+            }
+        }
+        removeGuestFromClass(parts);
+    }
+
+    /**
+     * Allows and calls another method for the cancellation of a member's
+     * membership button click.
+     * Ensures all necessary user inputs are inputted before removing the member from the system.
+     */
+    @FXML
+    protected void onCancelButtonClick() {
+        String firstName = FName_Cancel.getText().trim();
+        String lastName = LName_Cancel.getText().trim();
+        LocalDate dateOfBirth = DOB_Cancel.getValue();
+        if (dateOfBirth == null) {
+            outputTextAreaCancel.appendText("Missing data tokens. Fill all required fields.\n");
+            return;
+        }
+        String formattedDate = dateOfBirth.format(DateTimeFormatter.ofPattern("MM/dd/yyyy"));
+        String[] parts = new String[4];
+        parts[1] = firstName;
+        parts[2] = lastName;
+        parts[3] = formattedDate;
+        for (int i = 1; i < parts.length; i++) {
+            if (parts[i] == null || parts[i].trim().isEmpty()) {
+                outputTextAreaCancel.appendText("Missing data tokens. Fill all required fields.\n");
+                return;
+            }
+        }
+        cancelMembership(parts);
+    }
+
+    /**
      * Adds a member with Basic membership to the list of members based on the provided input tokens.
      * Ensures all necessary condition checks before adding a member to the list of members
      *
      * @param parts an array of strings, where each element represents a specific piece of information
-     *              from the command line argument
+     *              from the user
      */
     private void addBasicMember(String[] parts) {
         String firstName = parts[ADD_CANCEL_MEMBERSHIP_FIRST_NAME_INDEX];
         String lastName = parts[ADD_CANCEL_MEMBERSHIP_LAST_NAME_INDEX];
-        Date dob;
-        try {
-            dob = new Date(parts[ADD_CANCEL_MEMBERSHIP_DOB_INDEX]);
-        } catch (NumberFormatException e) {
-            outputTextArea.appendText("The date contains characters.\n");
-            return;
-        }
+        Date dob = new Date(parts[ADD_CANCEL_MEMBERSHIP_DOB_INDEX]);
+
         String studioLocationString = parts[ADD_MEMBERSHIP_STUDIO_INDEX];
-        if (!dob.isValid()) {
-            outputTextArea.appendText("DOB " + dob + ": invalid calendar date!\n");
-            return;
-        }
+
         if (dob.isTodayOrFutureDate()) {
             outputTextArea.appendText("DOB " + dob + ": cannot be today or a future date!\n");
             return;
@@ -566,13 +589,8 @@ public class StudioManagerController {
             outputTextArea.appendText("DOB " + dob + ": must be 18 or older to join!\n");
             return;
         }
-        Location studioLocation;
-        try {
-            studioLocation = Location.valueOf(studioLocationString.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            outputTextArea.appendText(studioLocationString + ": invalid studio location!\n");
-            return;
-        }
+        Location studioLocation = Location.valueOf(studioLocationString.toUpperCase());
+
         Profile newProfile = new Profile(firstName, lastName, dob);
         if (memberList.containsProfile(newProfile)) {
             outputTextArea.appendText(firstName + " " + lastName + " is already in the member database.\n");
@@ -589,23 +607,15 @@ public class StudioManagerController {
      * Ensures all necessary condition checks before adding a member to the list of members
      *
      * @param parts an array of strings, where each element represents a specific piece of information
-     *              from the command line argument
+     *              from the user
      */
     private void addFamilyMember(String[] parts) {
         String firstName = parts[ADD_CANCEL_MEMBERSHIP_FIRST_NAME_INDEX];
         String lastName = parts[ADD_CANCEL_MEMBERSHIP_LAST_NAME_INDEX];
-        Date dob;
-        try {
-            dob = new Date(parts[ADD_CANCEL_MEMBERSHIP_DOB_INDEX]);
-        } catch (NumberFormatException e) {
-            outputTextArea.appendText("The date contains characters.\n");
-            return;
-        }
+        Date dob = new Date(parts[ADD_CANCEL_MEMBERSHIP_DOB_INDEX]);
+
         String studioLocationString = parts[ADD_MEMBERSHIP_STUDIO_INDEX];
-        if (!dob.isValid()) {
-            outputTextArea.appendText("DOB " + dob + ": invalid calendar date!\n");
-            return;
-        }
+
         if (dob.isTodayOrFutureDate()) {
             outputTextArea.appendText("DOB " + dob + ": cannot be today or a future date!\n");
             return;
@@ -614,13 +624,8 @@ public class StudioManagerController {
             outputTextArea.appendText("DOB " + dob + ": must be 18 or older to join!\n");
             return;
         }
-        Location studioLocation;
-        try {
-            studioLocation = Location.valueOf(studioLocationString.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            outputTextArea.appendText(studioLocationString + ": invalid studio location!\n");
-            return;
-        }
+        Location studioLocation = Location.valueOf(studioLocationString.toUpperCase());
+
         Profile newProfile = new Profile(firstName, lastName, dob);
         if (memberList.containsProfile(newProfile)) {
             outputTextArea.appendText(firstName + " " + lastName + " is already in the member database.\n");
@@ -637,23 +642,15 @@ public class StudioManagerController {
      * Ensures all necessary condition checks before adding a member to the list of members
      *
      * @param parts an array of strings, where each element represents a specific piece of information
-     *              from the command line argument
+     *              from the user
      */
     private void addPremiumMember(String[] parts) {
         String firstName = parts[ADD_CANCEL_MEMBERSHIP_FIRST_NAME_INDEX];
         String lastName = parts[ADD_CANCEL_MEMBERSHIP_LAST_NAME_INDEX];
-        Date dob;
-        try {
-            dob = new Date(parts[ADD_CANCEL_MEMBERSHIP_DOB_INDEX]);
-        } catch (NumberFormatException e) {
-            outputTextArea.appendText("The date contains characters.\n");
-            return;
-        }
+        Date dob = new Date(parts[ADD_CANCEL_MEMBERSHIP_DOB_INDEX]);
+
         String studioLocationString = parts[ADD_MEMBERSHIP_STUDIO_INDEX];
-        if (!dob.isValid()) {
-            outputTextArea.appendText("DOB " + dob + ": invalid calendar date!\n");
-            return;
-        }
+
         if (dob.isTodayOrFutureDate()) {
             outputTextArea.appendText("DOB " + dob + ": cannot be today or a future date!\n");
             return;
@@ -662,13 +659,8 @@ public class StudioManagerController {
             outputTextArea.appendText("DOB " + dob + ": must be 18 or older to join!\n");
             return;
         }
-        Location studioLocation;
-        try {
-            studioLocation = Location.valueOf(studioLocationString.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            outputTextArea.appendText(studioLocationString + ": invalid studio location!\n");
-            return;
-        }
+        Location studioLocation = Location.valueOf(studioLocationString.toUpperCase());
+
         Profile newProfile = new Profile(firstName, lastName, dob);
         if (memberList.containsProfile(newProfile)) {
             outputTextArea.appendText(firstName + " " + lastName + " is already in the member database.\n");
@@ -685,22 +677,12 @@ public class StudioManagerController {
      * Ensures necessary condition checks before removing a member from the list of members
      *
      * @param parts an array of strings, where each element represents a specific piece of information
-     *              from the command line argument
+     *              from the user
      */
     private void cancelMembership(String[] parts) {
-        if (parts.length != CANCEL_MEMBERSHIP_INPUT_MAX) {
-            outputTextAreaCancel.appendText("Missing data tokens.\n");
-            return;
-        }
         String firstName = parts[ADD_CANCEL_MEMBERSHIP_FIRST_NAME_INDEX];
         String lastName = parts[ADD_CANCEL_MEMBERSHIP_LAST_NAME_INDEX];
-        Date dob;
-        try {
-            dob = new Date(parts[ADD_CANCEL_MEMBERSHIP_DOB_INDEX]);
-        } catch (NumberFormatException e) {
-            outputTextAreaCancel.appendText("The date contains characters.\n");
-            return;
-        }
+        Date dob = new Date(parts[ADD_CANCEL_MEMBERSHIP_DOB_INDEX]);
         Profile cancelProfile = new Profile(firstName, lastName, dob);
 
         boolean foundAndRemoved = false;
@@ -751,7 +733,7 @@ public class StudioManagerController {
      * Ensures all necessary condition checks before adding a member to a class
      *
      * @param parts an array of strings, where each element represents a specific piece of information
-     *              from the command line argument
+     *              from the user
      */
     private void memberClassAttendance(String[] parts) {
 
@@ -762,7 +744,7 @@ public class StudioManagerController {
         String lastName = parts[MEMBER_GUEST_LAST_NAME_INDEX];
         Date dob = new Date(parts[MEMBER_GUEST_DOB_INDEX]);
 
-        if (!addToClassInputChecker(parts, classString, instructorString, studioString, firstName, lastName, dob)) {
+        if (!addToClassInputChecker(firstName, lastName, dob)) {
             return;
         }
         Offer classType = Offer.valueOf(classString.toUpperCase());
@@ -799,44 +781,13 @@ public class StudioManagerController {
     /**
      * Helper method to check for necessary condition checks for successful addition of a member to a class
      *
-     * @param parts            an array of strings, where each element represents a specific piece of information
-     *                         from the command line argument
-     * @param classString      the class type string
-     * @param instructorString the class instructor string
-     * @param studioString     the class studio location string
-     * @param firstName        first name of the member
-     * @param lastName         last name of the member
-     * @param dob              date of birth of the member
+     * @param firstName first name of the member
+     * @param lastName  last name of the member
+     * @param dob       date of birth of the member
      * @return true if the input for adding a member to a class is valid; false otherwise
      */
-    private boolean addToClassInputChecker(String[] parts, String classString,
-                                           String instructorString, String studioString,
-                                           String firstName, String lastName, Date dob) {
-        if (parts.length != ADD_REMOVE_CLASS_INPUT_MAX) {
-            outputTextAreaClass.appendText("Missing data tokens.\n");
-            return false;
-        }
-        Offer classType;
-        Instructor instructor;
-        Location studio;
-        try {
-            classType = Offer.valueOf(classString.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            outputTextAreaClass.appendText(classString + " - class name does not exist.\n");
-            return false;
-        }
-        try {
-            instructor = Instructor.valueOf(instructorString.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            outputTextAreaClass.appendText(instructorString + " - instructor does not exist.\n");
-            return false;
-        }
-        try {
-            studio = Location.valueOf(studioString.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            outputTextAreaClass.appendText(studioString + " - invalid studio location.\n");
-            return false;
-        }
+    private boolean addToClassInputChecker(String firstName, String lastName, Date dob) {
+
         Profile profile = new Profile(firstName, lastName, dob);
         if (!memberList.containsProfile(profile)) {
             outputTextAreaClass.appendText(firstName + " " + lastName + " " + dob + " is not in the member database.\n");
@@ -882,13 +833,9 @@ public class StudioManagerController {
      * Ensures all necessary condition checks before removing a member from a class
      *
      * @param parts an array of strings, where each element represents a specific piece of information
-     *              from the command line argument
+     *              from the user
      */
     private void removeMemberFromClass(String[] parts) {
-        if (parts.length != ADD_REMOVE_CLASS_INPUT_MAX) {
-            outputTextAreaClass.appendText("Missing data tokens.\n");
-            return;
-        }
 
         String classString = parts[MEMBER_GUEST_CLASS_TYPE_INDEX];
         Instructor instructor = Instructor.valueOf(parts[MEMBER_GUEST_CLASS_INSTRUCTOR_INDEX].toUpperCase());
@@ -905,13 +852,8 @@ public class StudioManagerController {
             outputTextAreaClass.appendText(firstName + " " + lastName + " " + dob + " is not in the member database.\n");
             return;
         }
-        Offer classType;
-        try {
-            classType = Offer.valueOf(classString.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            outputTextAreaClass.appendText(classString + " - class name does not exist.\n");
-            return;
-        }
+        Offer classType = Offer.valueOf(classString.toUpperCase());
+
         for (FitnessClass fitnessClass : schedule.getClasses()) {
             if (fitnessClass.equals(schedule.findClass(classType, instructor, studio))) {
                 boolean removed = fitnessClass.removeMember(unregisterMember);
@@ -936,7 +878,7 @@ public class StudioManagerController {
      * Ensures all necessary condition checks before adding a guest to a class
      *
      * @param parts an array of strings, where each element represents a specific piece of information
-     *              from the command line argument
+     *              from the user
      */
     private void guestClassAttendance(String[] parts) {
 
@@ -946,8 +888,7 @@ public class StudioManagerController {
         String firstName = parts[MEMBER_GUEST_FIRST_NAME_INDEX];
         String lastName = parts[MEMBER_GUEST_LAST_NAME_INDEX];
         Date dob = new Date(parts[MEMBER_GUEST_DOB_INDEX]);
-        if (!addToClassInputChecker(parts, classString, instructorString,
-                studioString, firstName, lastName, dob)) {
+        if (!addToClassInputChecker(firstName, lastName, dob)) {
             return;
         }
         Offer classType = Offer.valueOf(classString.toUpperCase());
@@ -993,7 +934,6 @@ public class StudioManagerController {
                 fitnessClass.addGuest(member);
                 if (member instanceof Premium) {
                     ((Premium) member).useGuestPass();
-                    outputTextAreaClass.appendText(((Premium) member).getGuestPass() + " PASSES\n");
                 }
                 if (member instanceof Family) {
                     ((Family) member).setGuest(false);
@@ -1011,14 +951,10 @@ public class StudioManagerController {
      * Ensures all necessary condition checks before removing a guest from a class
      *
      * @param parts an array of strings, where each element represents a specific piece of information
-     *              from the command line argument
+     *              from the user
      */
     private void removeGuestFromClass(String[] parts) {
 
-        if (parts.length != ADD_REMOVE_CLASS_INPUT_MAX) {
-            outputTextAreaClass.appendText("Missing data tokens.\n");
-            return;
-        }
         String classString = parts[MEMBER_GUEST_CLASS_TYPE_INDEX];
         Instructor instructor = Instructor.valueOf(parts[MEMBER_GUEST_CLASS_INSTRUCTOR_INDEX].toUpperCase());
         Location studio = Location.valueOf(parts[MEMBER_GUEST_CLASS_STUDIO_INDEX].toUpperCase());
@@ -1034,21 +970,14 @@ public class StudioManagerController {
             return;
         }
 
-        Offer classType;
-        try {
-            classType = Offer.valueOf(classString.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            outputTextAreaClass.appendText(classString + " - class name does not exist.\n");
-            return;
-        }
+        Offer classType = Offer.valueOf(classString.toUpperCase());
 
         for (FitnessClass fitnessClass : schedule.getClasses()) {
             if (fitnessClass.equals(schedule.findClass(classType, instructor, studio))) {
                 boolean removed = fitnessClass.removeGuest(unregisterGuest);
-                if(removed) {
-                    if (unregisterGuest instanceof Premium) {
+                if (removed) {
+                    if (unregisterGuest instanceof Premium && ((Premium) unregisterGuest).getGuestPass() <= PREMIUM_GUEST_PASS_LIMIT) {
                         ((Premium) unregisterGuest).addGuestPass();
-                        outputTextAreaClass.appendText(((Premium) unregisterGuest).getGuestPass() + " PASSES\n");
 
                     }
                     if (unregisterGuest instanceof Family) {
@@ -1059,8 +988,7 @@ public class StudioManagerController {
                             fitnessClass.getInstructor() + ", " + fitnessClass.getTime() + ", " +
                             fitnessClass.getStudio() + "\n");
                     return;
-                }
-                else {
+                } else {
                     outputTextAreaClass.appendText(profile.getFname() + " " +
                             profile.getLname() + " (guest) is not in " +
                             fitnessClass.getInstructor() + ", " + fitnessClass.getTime() +

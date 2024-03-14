@@ -111,6 +111,7 @@ public class FitnessClass {
      * @param guest The guest to add.
      */
     public void addGuest(Member guest) {
+        //See this for premium guests
         this.guests.addGuest(guest);
         //this.guests.add(guest);
     }

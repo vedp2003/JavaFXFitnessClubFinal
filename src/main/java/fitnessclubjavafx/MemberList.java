@@ -123,7 +123,7 @@ public class MemberList {
                 break;
             }
         }
-        if(memberIndex == NOT_FOUND) {
+        if (memberIndex == NOT_FOUND) {
             return null;
         }
         return members[memberIndex];
@@ -151,7 +151,7 @@ public class MemberList {
      * Adds a new guest to the list of guests
      *
      * @param guest the guest to add
--     */
+     */
     public void addGuest(Member guest) {
         if (size == members.length) {
             grow();
