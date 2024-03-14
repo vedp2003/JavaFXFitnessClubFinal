@@ -14,6 +14,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableColumn;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
@@ -92,6 +94,8 @@ public class StudioManagerController {
     @FXML
     private Button LoadClasses_ID;
     @FXML
+    public TextArea outputTextAreaLoadClasses;
+    @FXML
     public TextArea outputTextAreaPrint;
     @FXML
     private ToggleGroup membershipToggleGroup;
@@ -111,6 +115,16 @@ public class StudioManagerController {
     private TableView<String> tableClassTypes;
     @FXML
     private TableColumn<String, String> col_class_type;
+    @FXML
+    private TableView<FitnessClass> tableClassSchedule;
+    @FXML
+    private TableColumn<FitnessClass, String> col_time;
+    @FXML
+    private TableColumn<FitnessClass, String> col_class_name;
+    @FXML
+    private TableColumn<FitnessClass, String> col_instructor;
+    @FXML
+    private TableColumn<FitnessClass, String> col_location;
 
     /**
      * Default constructor/no-argument constructor
@@ -137,17 +151,27 @@ public class StudioManagerController {
         tableLocations.setItems(locations);
 
         col_instructor_name.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue()));
-
-        ObservableList<String> instructors = FXCollections.observableArrayList("JENNIFER", "KIM", "DENISE", "DAVIS", "EMMA");
+        int countIns = 0;
+        ObservableList<String> instructors = FXCollections.observableArrayList();
+        while (countIns < Instructor.values().length) {
+            instructors.add(Instructor.values()[countIns++].toString());
+        }
         tableInstructors.setItems(instructors);
 
         col_class_type.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue()));
-
-        ObservableList<String> classTypes = FXCollections.observableArrayList("PILATES", "SPINNING", "CARDIO");
+        int countCType = 0;
+        ObservableList<String> classTypes = FXCollections.observableArrayList();
+        while (countCType < Offer.values().length) {
+            classTypes.add(Offer.values()[countCType++].toString());
+        }
         tableClassTypes.setItems(classTypes);
 
-        characterInputRestrict();
+        col_time.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTime().toString()));
+        col_class_name.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getClassInfo().name()));
+        col_instructor.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getInstructor().name()));
+        col_location.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getStudio().toString()));
 
+        characterInputRestrict();
     }
 
     /**
@@ -327,27 +351,40 @@ public class StudioManagerController {
     }
 
     /**
-     * Prints all the fitness classes from classSchedule.txt upon button click.
+     * Loads all the fitness classes from selected classSchedule.txt upon button click.
+     * Displays the schedule on the tableView.
      * Sets the button to gray once the task is completed.
      */
     @FXML
     protected void onLoadClassesButtonClick() {
         try {
             schedule = new Schedule();
-            schedule.load(new File("classSchedule.txt"));
-            outputTextAreaClass.appendText("-Fitness classes loaded-\n");
-            printClasses();
-            outputTextAreaClass.appendText("-end of class list.\n");
 
+            FileChooser chooser = new FileChooser();
+            chooser.setTitle("Open classSchedule.txt File for Loading");
+            chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Text Files", "*.txt"),
+                    new FileChooser.ExtensionFilter("All Files", "*.*"));
+            Stage stage = new Stage();
+            File sourceFile = chooser.showOpenDialog(stage);
+
+            schedule.load(sourceFile);
+            FitnessClass[] classes = schedule.getClasses();
+            ObservableList<FitnessClass> fitnessClasses = FXCollections.observableArrayList();
+            int countFC = 0;
+            while (countFC < classes.length) {
+                fitnessClasses.add(schedule.getClasses()[countFC++]);
+            }
+            tableClassSchedule.setItems(fitnessClasses);
+            outputTextAreaLoadClasses.appendText("Class Schedule / Fitness classes Loaded.\n");
             LoadClasses_ID.setDisable(true);
 
-        } catch (IOException e) {
-            outputTextAreaClass.setText("ERROR LOADING FILE\n\n");
+        } catch (RuntimeException | IOException e) {
+            outputTextAreaLoadClasses.appendText("Error Loading File. Choose the correct file.\n");
         }
     }
 
     /**
-     * Prints all the members from memberList.txt upon button click.
+     * Loads all the members from selected memberList.txt upon button click.
      * Sets the button to gray once the task is completed.
      */
     @FXML
@@ -355,33 +392,21 @@ public class StudioManagerController {
 
         try {
             memberList = new MemberList();
-            memberList.load(new File("memberList.txt"));
-            outputTextArea.appendText("-list of members loaded-\n");
-            printMembers();
-            outputTextArea.appendText("-end of list-\n\n");
+
+            FileChooser chooser = new FileChooser();
+            chooser.setTitle("Open memberList.txt File for Loading");
+            chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Text Files", "*.txt"),
+                    new FileChooser.ExtensionFilter("All Files", "*.*"));
+            Stage stage = new Stage();
+            File sourceFile = chooser.showOpenDialog(stage);
+
+            memberList.load(sourceFile);
+            outputTextArea.appendText("Members list Loaded.\n");
 
             loadMemberButton.setDisable(true);
 
-        } catch (IOException e) {
-            outputTextArea.setText("ERROR LOADING FILE\n\n");
-        }
-    }
-
-    /**
-     * Helper method to print the members from the list of members
-     */
-    private void printMembers() {
-        for (int i = 0; i < memberList.getSize(); i++) {
-            outputTextArea.appendText(memberList.getMembers()[i] + "\n");
-        }
-    }
-
-    /**
-     * Helper method to print the classes from the schedule's list of fitness classes
-     */
-    private void printClasses() {
-        for (int i = 0; i < schedule.getNumClasses(); i++) {
-            outputTextAreaClass.appendText(schedule.getClasses()[i] + "\n");
+        } catch (RuntimeException | IOException e) {
+            outputTextArea.appendText("Error Loading File. Choose the correct file.\n");
         }
     }
 

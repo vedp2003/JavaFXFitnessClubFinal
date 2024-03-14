@@ -18,11 +18,11 @@ public class StudioManagerMain extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(StudioManagerMain.class.getResource("studioManagerView.fxml"));
         Scene scene = null;
         try {
-            scene = new Scene(fxmlLoader.load(), 620, 600);
+            scene = new Scene(fxmlLoader.load(), 680, 600);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        stage.setTitle("Fitness Club Studio Manager");
+        stage.setTitle("RU Fitness Club - Studio Manager");
         stage.setScene(scene);
         stage.show();
     }
