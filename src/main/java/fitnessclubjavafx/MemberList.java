@@ -156,6 +156,7 @@ public class MemberList {
         if (size == members.length) {
             grow();
         }
+
         members[size] = guest;
         size++;
     }

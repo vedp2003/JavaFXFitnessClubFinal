@@ -296,8 +296,8 @@ public class StudioManagerController {
             outputTextArea.appendText("Load the Members Before Adding a Member!\n");
             return;
         }
-        String firstName = FName_Text.getText();
-        String lastName = LName_Text.getText();
+        String firstName = FName_Text.getText().trim();
+        String lastName = LName_Text.getText().trim();
         LocalDate dateOfBirth = DOB.getValue();
         if (dateOfBirth == null) {
             outputTextArea.appendText("Missing data tokens. Fill all required fields.\n");
@@ -566,7 +566,7 @@ public class StudioManagerController {
 
     /**
      * Allows and calls another method for the cancellation of a member's
-     * membership button click.
+     * membership upon button click.
      * Ensures all necessary user inputs are inputted before removing the member from the system.
      */
     @FXML
