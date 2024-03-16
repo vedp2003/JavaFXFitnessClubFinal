@@ -571,6 +571,10 @@ public class StudioManagerController {
      */
     @FXML
     protected void onCancelButtonClick() {
+        if (!loadMemberButton.isDisabled()) {
+            outputTextAreaCancel.appendText("Load the Members Before Removing a Member!\n");
+            return;
+        }
         String firstName = FName_Cancel.getText().trim();
         String lastName = LName_Cancel.getText().trim();
         LocalDate dateOfBirth = DOB_Cancel.getValue();
@@ -593,7 +597,7 @@ public class StudioManagerController {
     }
 
     /**
-     * Adds a member with Basic membership to the list of members based on the provided input tokens.
+     * Adds a member with Basic membership to the list of members based on the provided user input.
      * Ensures all necessary condition checks before adding a member to the list of members
      *
      * @param parts an array of strings, where each element represents a specific piece of information
@@ -628,7 +632,7 @@ public class StudioManagerController {
     }
 
     /**
-     * Adds a member with Family membership to the list of members based on the provided input tokens.
+     * Adds a member with Family membership to the list of members based on the provided user input.
      * Ensures all necessary condition checks before adding a member to the list of members
      *
      * @param parts an array of strings, where each element represents a specific piece of information
@@ -663,7 +667,7 @@ public class StudioManagerController {
     }
 
     /**
-     * Adds a member with Premium membership to the list of members based on the provided input tokens.
+     * Adds a member with Premium membership to the list of members based on the provided user input.
      * Ensures all necessary condition checks before adding a member to the list of members
      *
      * @param parts an array of strings, where each element represents a specific piece of information
@@ -742,9 +746,20 @@ public class StudioManagerController {
                 }
                 if (fitnessClass.getGuests().getSize() > 0) {
                     outputTextAreaPrint.appendText("[Guests]\n");
-                    for (Member guest : fitnessClass.getGuests().getMembers()) {
-                        if (guest != null) {
-                            outputTextAreaPrint.appendText("   " + guest + "\n");
+                    Member[] guests = fitnessClass.getGuests().getMembers();
+                    for (int i = 0; i < guests.length; i++) {
+                        boolean alreadyPrinted = false;
+                        if (guests[i] == null || !(guests[i] instanceof Premium)) {
+                            continue;
+                        }
+                        for (int j = 0; j < i; j++) {
+                            if (guests[i].equals(guests[j])) {
+                                alreadyPrinted = true;
+                                break;
+                            }
+                        }
+                        if (!alreadyPrinted) {
+                            outputTextAreaPrint.appendText("   " + guests[i] + "\n");
                         }
                     }
                 }
@@ -761,14 +776,12 @@ public class StudioManagerController {
      *              from the user
      */
     private void memberClassAttendance(String[] parts) {
-
         String classString = parts[MEMBER_GUEST_CLASS_TYPE_INDEX];
         String instructorString = parts[MEMBER_GUEST_CLASS_INSTRUCTOR_INDEX];
         String studioString = parts[MEMBER_GUEST_CLASS_STUDIO_INDEX];
         String firstName = parts[MEMBER_GUEST_FIRST_NAME_INDEX];
         String lastName = parts[MEMBER_GUEST_LAST_NAME_INDEX];
         Date dob = new Date(parts[MEMBER_GUEST_DOB_INDEX]);
-
         if (!addToClassInputChecker(firstName, lastName, dob)) {
             return;
         }
@@ -861,15 +874,13 @@ public class StudioManagerController {
      *              from the user
      */
     private void removeMemberFromClass(String[] parts) {
-
-        String classString = parts[MEMBER_GUEST_CLASS_TYPE_INDEX];
+        Offer classType = Offer.valueOf(parts[MEMBER_GUEST_CLASS_TYPE_INDEX].toUpperCase());
         Instructor instructor = Instructor.valueOf(parts[MEMBER_GUEST_CLASS_INSTRUCTOR_INDEX].toUpperCase());
         Location studio = Location.valueOf(parts[MEMBER_GUEST_CLASS_STUDIO_INDEX].toUpperCase());
         String firstName = parts[MEMBER_GUEST_FIRST_NAME_INDEX];
         String lastName = parts[MEMBER_GUEST_LAST_NAME_INDEX];
         Date dob = new Date(parts[MEMBER_GUEST_DOB_INDEX]);
         Profile unregisterProfile = new Profile(firstName, lastName, dob);
-
         Member unregisterMember = null;
         if (memberList.getMemberFromProfile(unregisterProfile) != null) {
             unregisterMember = memberList.getMemberFromProfile(unregisterProfile);
@@ -877,8 +888,6 @@ public class StudioManagerController {
             outputTextAreaClass.appendText(firstName + " " + lastName + " " + dob + " is not in the member database.\n");
             return;
         }
-        Offer classType = Offer.valueOf(classString.toUpperCase());
-
         for (FitnessClass fitnessClass : schedule.getClasses()) {
             if (fitnessClass.equals(schedule.findClass(classType, instructor, studio))) {
                 boolean removed = fitnessClass.removeMember(unregisterMember);
@@ -906,7 +915,6 @@ public class StudioManagerController {
      *              from the user
      */
     private void guestClassAttendance(String[] parts) {
-
         String classString = parts[MEMBER_GUEST_CLASS_TYPE_INDEX];
         String instructorString = parts[MEMBER_GUEST_CLASS_INSTRUCTOR_INDEX];
         String studioString = parts[MEMBER_GUEST_CLASS_STUDIO_INDEX];
@@ -921,6 +929,11 @@ public class StudioManagerController {
         Location studio = Location.valueOf(studioString.toUpperCase());
         Profile profile = new Profile(firstName, lastName, dob);
         Member member = memberList.getMemberFromProfile(profile);
+        FitnessClass targetClass = schedule.findClass(classType, instructor, studio);
+        if (targetClass == null) {
+            outputTextAreaClass.appendText(classType + " by " + instructor + " does not exist at " + studio.getName() + "\n");
+            return;
+        }
         if (member instanceof Basic) {
             outputTextAreaClass.appendText(firstName + " " + lastName + " [BASIC] - no guest pass.\n");
             return;
@@ -979,8 +992,7 @@ public class StudioManagerController {
      *              from the user
      */
     private void removeGuestFromClass(String[] parts) {
-
-        String classString = parts[MEMBER_GUEST_CLASS_TYPE_INDEX];
+        Offer classType = Offer.valueOf(parts[MEMBER_GUEST_CLASS_TYPE_INDEX].toUpperCase());
         Instructor instructor = Instructor.valueOf(parts[MEMBER_GUEST_CLASS_INSTRUCTOR_INDEX].toUpperCase());
         Location studio = Location.valueOf(parts[MEMBER_GUEST_CLASS_STUDIO_INDEX].toUpperCase());
         String firstName = parts[MEMBER_GUEST_FIRST_NAME_INDEX];
@@ -994,30 +1006,23 @@ public class StudioManagerController {
             outputTextAreaClass.appendText(firstName + " " + lastName + " " + dob + " is not in the member database.\n");
             return;
         }
-
-        Offer classType = Offer.valueOf(classString.toUpperCase());
-
         for (FitnessClass fitnessClass : schedule.getClasses()) {
             if (fitnessClass.equals(schedule.findClass(classType, instructor, studio))) {
                 boolean removed = fitnessClass.removeGuest(unregisterGuest);
                 if (removed) {
                     if (unregisterGuest instanceof Premium && ((Premium) unregisterGuest).getGuestPass() <= PREMIUM_GUEST_PASS_LIMIT) {
                         ((Premium) unregisterGuest).addGuestPass();
-
                     }
                     if (unregisterGuest instanceof Family) {
                         ((Family) unregisterGuest).setGuest(true);
                     }
                     outputTextAreaClass.appendText(unregisterGuest.getProfile().getFname() + " " +
                             unregisterGuest.getProfile().getLname() + " (guest) is removed from " +
-                            fitnessClass.getInstructor() + ", " + fitnessClass.getTime() + ", " +
-                            fitnessClass.getStudio() + "\n");
+                            fitnessClass.getInstructor() + ", " + fitnessClass.getTime() + ", " + fitnessClass.getStudio() + "\n");
                     return;
                 } else {
-                    outputTextAreaClass.appendText(profile.getFname() + " " +
-                            profile.getLname() + " (guest) is not in " +
-                            fitnessClass.getInstructor() + ", " + fitnessClass.getTime() +
-                            ", " + fitnessClass.getStudio() + "\n");
+                    outputTextAreaClass.appendText(profile.getFname() + " " + profile.getLname() + " (guest) is not in " +
+                            fitnessClass.getInstructor() + ", " + fitnessClass.getTime() + ", " + fitnessClass.getStudio() + "\n");
                 }
             }
         }
