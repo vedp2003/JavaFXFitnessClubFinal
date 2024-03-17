@@ -59,13 +59,15 @@
                 </AnchorPane>
             </Tab>
 
-            <Tab text="Load &amp; Add Members">
-                <AnchorPane minHeight="0.0" minWidth="0.0">
-                    <GridPane vgap="16" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10"
-                              AnchorPane.topAnchor="10">
+            <Tab text="Membership">
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="400.0" prefWidth="600.0">
+                    <GridPane vgap="2" AnchorPane.bottomAnchor="250.0" AnchorPane.leftAnchor="0.0"
+                              AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                         <columnConstraints>
-                            <ColumnConstraints percentWidth="34.0"/>
-                            <ColumnConstraints percentWidth="66.0"/>
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="116.66666666666667"
+                                               minWidth="93.66666666666667" prefWidth="116.66666666666667"/>
+                            <ColumnConstraints hgrow="ALWAYS" maxWidth="344.3333333333333" minWidth="321.3333333333333"
+                                               prefWidth="321.3333333333333"/>
                         </columnConstraints>
                         <rowConstraints>
                             <RowConstraints vgrow="SOMETIMES"/>
@@ -75,59 +77,55 @@
                             <RowConstraints vgrow="SOMETIMES"/>
                             <RowConstraints vgrow="SOMETIMES"/>
                         </rowConstraints>
-                        <Label text="First Name" GridPane.columnIndex="0" GridPane.halignment="CENTER"
+                        <Label text="Member Profile" GridPane.columnIndex="0" GridPane.halignment="CENTER"
                                GridPane.rowIndex="0">
                             <font>
-                                <Font name="System Bold" size="13.0"/>
+                                <Font name="System Bold" size="12.0"/>
                             </font>
                         </Label>
-                        <Label text="Last Name" GridPane.columnIndex="0" GridPane.halignment="CENTER"
-                               GridPane.rowIndex="1">
-                            <font>
-                                <Font name="System Bold" size="13.0"/>
-                            </font>
-                        </Label>
-                        <Label text="Date of Birth" GridPane.columnIndex="0" GridPane.halignment="CENTER"
-                               GridPane.rowIndex="2">
-                            <font>
-                                <Font name="System Bold" size="13.0"/>
-                            </font>
-                        </Label>
-                        <Label text="Membership Type" GridPane.columnIndex="0" GridPane.halignment="CENTER"
+                        <Label text="Member Type" GridPane.columnIndex="0" GridPane.halignment="CENTER"
                                GridPane.rowIndex="3">
                             <font>
-                                <Font name="System Bold" size="13.0"/>
+                                <Font name="System Bold" size="12.0"/>
                             </font>
                         </Label>
-                        <Label text="Home Studio Location" GridPane.columnIndex="0" GridPane.halignment="CENTER"
+                        <Label text="Home Studio" GridPane.columnIndex="0" GridPane.halignment="CENTER"
                                GridPane.rowIndex="4">
                             <font>
-                                <Font name="System Bold" size="13.0"/>
+                                <Font name="System Bold" size="12.0"/>
                             </font>
                         </Label>
-                        <TextField fx:id="FName_Text" prefHeight="25.0" prefWidth="269.0" GridPane.columnIndex="1"
-                                   GridPane.rowIndex="0"/>
-                        <TextField fx:id="LName_Text" prefWidth="284.0" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-                        <DatePicker fx:id="DOB" editable="false" prefHeight="25.0" prefWidth="400.0"
-                                    GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-                        <HBox alignment="CENTER" spacing="20" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                            <RadioButton fx:id="basic" mnemonicParsing="false" text="Basic">
+                        <TextField fx:id="firstName_Member" prefHeight="25.0" prefWidth="176.0" promptText="First Name"
+                                   GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                        <TextField fx:id="lastName_Member" prefHeight="25.0" prefWidth="176.0" promptText="Last Name"
+                                   GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                        <HBox alignment="CENTER" spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                            <DatePicker fx:id="DOB_Member" editable="false" prefHeight="25.0" prefWidth="176.0"
+                                        promptText="Date of Birth"/>
+                            <Button fx:id="cancelButton" onAction="#onCancelButtonClick" text="Cancel Membership"
+                                    textFill="#bc1414">
                                 <font>
-                                    <Font size="13.0"/>
+                                    <Font name="Elephant" size="12.0"/>
                                 </font>
-                            </RadioButton>
-                            <RadioButton fx:id="family" mnemonicParsing="false" text="Family">
-                                <font>
-                                    <Font size="13.0"/>
-                                </font>
-                            </RadioButton>
-                            <RadioButton fx:id="premium" mnemonicParsing="false" text="Premium">
-                                <font>
-                                    <Font size="13.0"/>
-                                </font>
-                            </RadioButton>
+                            </Button>
                         </HBox>
-                        <ComboBox fx:id="studioLocationCombo" prefHeight="25.0" prefWidth="400.0"
+                        <HBox alignment="CENTER" spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                            <RadioButton fx:id="basicRadio" mnemonicParsing="false" text="Basic"/>
+                            <RadioButton fx:id="familyRadio" mnemonicParsing="false" text="Family"/>
+                            <RadioButton fx:id="premiumRadio" mnemonicParsing="false" text="Premium"/>
+                            <Label prefHeight="17.0" prefWidth="58.0" text="Guest Pass">
+                                <font>
+                                    <Font name="Berlin Sans FB" size="13.0"/>
+                                </font>
+                            </Label>
+                            <TextField fx:id="guestPass_Member" editable="false" prefHeight="25.0" prefWidth="25.0"
+                                       text="0">
+                                <font>
+                                    <Font name="Berlin Sans FB" size="12.0"/>
+                                </font>
+                            </TextField>
+                        </HBox>
+                        <ComboBox fx:id="studioLocationCombo" prefHeight="25.0" prefWidth="331.0"
                                   GridPane.columnIndex="1" GridPane.rowIndex="4">
                             <items>
                                 <FXCollections fx:factory="observableArrayList">
@@ -139,7 +137,7 @@
                                 </FXCollections>
                             </items>
                         </ComboBox>
-                        <HBox alignment="CENTER" spacing="15" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                        <HBox alignment="CENTER" spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="5">
                             <Button onAction="#onAddMemberButtonClick" text="Add Member" textFill="#bc1414">
                                 <font>
                                     <Font name="Perpetua Titling MT Bold" size="12.0"/>
@@ -153,63 +151,9 @@
                             </Button>
                         </HBox>
                     </GridPane>
-                    <TextArea fx:id="outputTextArea" AnchorPane.bottomAnchor="10" AnchorPane.leftAnchor="10"
-                              AnchorPane.rightAnchor="10" AnchorPane.topAnchor="255"/>
-                </AnchorPane>
-            </Tab>
-
-            <Tab text="Remove Members">
-                <AnchorPane minHeight="0.0" minWidth="0.0">
-                    <GridPane vgap="16" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10"
-                              AnchorPane.topAnchor="10">
-                        <columnConstraints>
-                            <ColumnConstraints percentWidth="34.0"/>
-                            <ColumnConstraints percentWidth="66.0"/>
-                        </columnConstraints>
-                        <rowConstraints>
-                            <RowConstraints vgrow="SOMETIMES"/>
-                            <RowConstraints vgrow="SOMETIMES"/>
-                            <RowConstraints vgrow="SOMETIMES"/>
-                            <RowConstraints vgrow="SOMETIMES"/>
-                            <RowConstraints vgrow="SOMETIMES"/>
-                            <RowConstraints vgrow="SOMETIMES"/>
-                        </rowConstraints>
-                        <Label text="First Name" GridPane.columnIndex="0" GridPane.halignment="CENTER"
-                               GridPane.rowIndex="0">
-                            <font>
-                                <Font name="System Bold" size="14.0"/>
-                            </font>
-                        </Label>
-                        <Label text="Last Name" GridPane.columnIndex="0" GridPane.halignment="CENTER"
-                               GridPane.rowIndex="1">
-                            <font>
-                                <Font name="System Bold" size="14.0"/>
-                            </font>
-                        </Label>
-                        <Label text="Date of Birth" GridPane.columnIndex="0" GridPane.halignment="CENTER"
-                               GridPane.rowIndex="2">
-                            <font>
-                                <Font name="System Bold" size="14.0"/>
-                            </font>
-                        </Label>
-                        <TextField fx:id="FName_Cancel" prefHeight="25.0" prefWidth="286.0" GridPane.columnIndex="1"
-                                   GridPane.rowIndex="0"/>
-                        <TextField fx:id="LName_Cancel" prefWidth="249.0" GridPane.columnIndex="1"
-                                   GridPane.rowIndex="1"/>
-                        <DatePicker fx:id="DOB_Cancel" editable="false" prefHeight="25.0" prefWidth="400.0"
-                                    GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-                        <HBox alignment="CENTER" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                            <Button fx:id="cancelButton" onAction="#onCancelButtonClick" text="Cancel Membership"
-                                    textFill="#bc1414">
-                                <font>
-                                    <Font name="Elephant" size="14.0"/>
-                                </font>
-                            </Button>
-                        </HBox>
-                    </GridPane>
-                    <TextArea fx:id="outputTextAreaCancel" layoutY="193.0" prefHeight="298.0" prefWidth="418.0"
-                              AnchorPane.bottomAnchor="10" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10"
-                              AnchorPane.topAnchor="193.0"/>
+                    <TextArea fx:id="outputTextAreaMember" editable="false" layoutY="342.0" prefHeight="144.0"
+                              prefWidth="418.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="10.0"
+                              AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="342.0"/>
                 </AnchorPane>
             </Tab>
 
@@ -222,10 +166,10 @@
                                 <TableColumn fx:id="col_time" maxWidth="Infinity" minWidth="0" text="Time"/>
                                 <TableColumn fx:id="col_class_name" maxWidth="Infinity" minWidth="0"
                                              prefWidth="92.00000762939453" text="Class Name"/>
-                                <TableColumn fx:id="col_instructor" maxWidth="Infinity" minWidth="0" prefWidth="68.0"
+                                <TableColumn fx:id="col_instructor" maxWidth="Infinity" minWidth="0" prefWidth="78.0"
                                              text="Instructor"/>
                                 <TableColumn fx:id="col_location" maxWidth="Infinity" minWidth="0"
-                                             prefWidth="176.66664123535156" text="Studio Location"/>
+                                             prefWidth="166.66668701171875" text="Studio Location"/>
                             </columns>
                         </TableView>
                         <HBox spacing="14">
@@ -235,8 +179,8 @@
                                     <Font name="Bell MT Bold" size="14.0"/>
                                 </font>
                             </Button>
-                            <TextArea fx:id="outputTextAreaLoadClasses" prefHeight="73.0" prefWidth="265.0"
-                                      HBox.hgrow="ALWAYS"/>
+                            <TextArea fx:id="outputTextAreaLoadClasses" editable="false" prefHeight="73.0"
+                                      prefWidth="265.0" HBox.hgrow="ALWAYS"/>
                         </HBox>
                     </VBox>
                 </AnchorPane>
@@ -265,7 +209,7 @@
                             <RowConstraints vgrow="SOMETIMES"/>
                             <RowConstraints vgrow="SOMETIMES"/>
                         </rowConstraints>
-                        <Label style="-fx-font-weight: bold;" text="Class Type:" GridPane.columnIndex="0"
+                        <Label style="-fx-font-weight: bold;" text="Class Type" GridPane.columnIndex="0"
                                GridPane.rowIndex="0">
                             <font>
                                 <Font size="14.0"/>
@@ -281,7 +225,7 @@
                                 </FXCollections>
                             </items>
                         </ComboBox>
-                        <Label style="-fx-font-weight: bold;" text="Instructor:" GridPane.columnIndex="0"
+                        <Label style="-fx-font-weight: bold;" text="Instructor" GridPane.columnIndex="0"
                                GridPane.rowIndex="1">
                             <font>
                                 <Font size="14.0"/>
@@ -299,7 +243,7 @@
                                 </FXCollections>
                             </items>
                         </ComboBox>
-                        <Label style="-fx-font-weight: bold;" text="Location:" GridPane.columnIndex="0"
+                        <Label style="-fx-font-weight: bold;" text="Studio Location" GridPane.columnIndex="0"
                                GridPane.rowIndex="2">
                             <font>
                                 <Font name="System Bold" size="14.0"/>
@@ -317,30 +261,30 @@
                                 </FXCollections>
                             </items>
                         </ComboBox>
-                        <Label style="-fx-font-weight: bold;" text="First Name:" GridPane.columnIndex="0"
+                        <Label style="-fx-font-weight: bold;" text="First Name" GridPane.columnIndex="0"
                                GridPane.rowIndex="3">
                             <font>
                                 <Font size="14.0"/>
                             </font>
                         </Label>
-                        <TextField fx:id="firstNameMemberClass" prefHeight="25.0" prefWidth="216.0"
-                                   GridPane.columnIndex="1" GridPane.rowIndex="3"/>
-                        <Label style="-fx-font-weight: bold;" text="Last Name:" GridPane.columnIndex="0"
+                        <TextField fx:id="firstNameMemberClass" promptText="First Name" prefHeight="25.0"
+                                   prefWidth="216.0" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                        <Label style="-fx-font-weight: bold;" text="Last Name" GridPane.columnIndex="0"
                                GridPane.rowIndex="4">
                             <font>
                                 <Font size="14.0"/>
                             </font>
                         </Label>
-                        <TextField fx:id="lastNameMemberClass" prefHeight="25.0" prefWidth="270.0"
-                                   GridPane.columnIndex="1" GridPane.rowIndex="4"/>
-                        <Label style="-fx-font-weight: bold;" text="Date of Birth:" GridPane.columnIndex="0"
+                        <TextField fx:id="lastNameMemberClass" promptText="Last Name" prefHeight="25.0"
+                                   prefWidth="270.0" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+                        <Label style="-fx-font-weight: bold;" text="Date of Birth" GridPane.columnIndex="0"
                                GridPane.rowIndex="5">
                             <font>
                                 <Font size="14.0"/>
                             </font>
                         </Label>
-                        <DatePicker fx:id="dobMemberClass" editable="false" prefHeight="25.0" prefWidth="290.0"
-                                    GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+                        <DatePicker fx:id="dobMemberClass" editable="false" promptText="Date of Birth" prefHeight="25.0"
+                                    prefWidth="290.0" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
                         <HBox alignment="CENTER" spacing="10" GridPane.columnIndex="0" GridPane.columnSpan="4"
                               GridPane.rowIndex="6">
                             <Button onAction="#onAddMemberToClassButtonClick" text="Add Member to Class"
@@ -373,9 +317,9 @@
                             </Button>
                         </HBox>
                     </GridPane>
-                    <TextArea fx:id="outputTextAreaClass" layoutY="356.0" prefHeight="135.0" prefWidth="418.0"
-                              AnchorPane.bottomAnchor="10" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10"
-                              AnchorPane.topAnchor="356.0"/>
+                    <TextArea fx:id="outputTextAreaClass" editable="false" layoutY="356.0" prefHeight="135.0"
+                              prefWidth="418.0" AnchorPane.bottomAnchor="10" AnchorPane.leftAnchor="10"
+                              AnchorPane.rightAnchor="10" AnchorPane.topAnchor="356.0"/>
                 </AnchorPane>
             </Tab>
 

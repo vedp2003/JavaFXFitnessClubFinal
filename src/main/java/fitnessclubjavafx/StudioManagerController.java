@@ -50,33 +50,27 @@ public class StudioManagerController {
     private Schedule schedule;
 
     @FXML
-    private TextArea outputTextArea;
+    private TextField guestPass_Member;
     @FXML
-    private TextField FName_Text;
+    private TextArea outputTextAreaMember;
     @FXML
-    private TextField LName_Text;
+    private TextField firstName_Member;
     @FXML
-    private DatePicker DOB;
+    private TextField lastName_Member;
     @FXML
-    private RadioButton basic;
+    private DatePicker DOB_Member;
     @FXML
-    private RadioButton family;
+    public Button cancelButton;
     @FXML
-    private RadioButton premium;
+    private RadioButton basicRadio;
+    @FXML
+    private RadioButton familyRadio;
+    @FXML
+    private RadioButton premiumRadio;
     @FXML
     private ComboBox<String> studioLocationCombo;
     @FXML
     private Button loadMemberButton;
-    @FXML
-    public TextField FName_Cancel;
-    @FXML
-    public TextField LName_Cancel;
-    @FXML
-    public DatePicker DOB_Cancel;
-    @FXML
-    public Button cancelButton;
-    @FXML
-    public TextArea outputTextAreaCancel;
     @FXML
     public ComboBox<String> classTypeMemberClass;
     @FXML
@@ -135,15 +129,10 @@ public class StudioManagerController {
     }
 
     /**
-     * Initializes the controller, sets up the TableView contents, and calls input restrict method at the start
+     * Initializes the controller, sets up radio buttons / the TableView contents, and calls input restrict method at the start
      */
     @FXML
     public void initialize() {
-        membershipToggleGroup = new ToggleGroup();
-        basic.setToggleGroup(membershipToggleGroup);
-        family.setToggleGroup(membershipToggleGroup);
-        premium.setToggleGroup(membershipToggleGroup);
-
         col_city.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().name()));
         col_county.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getCounty()));
         col_zip.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getZipCode()));
@@ -172,31 +161,49 @@ public class StudioManagerController {
         col_location.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getStudio().toString()));
 
         characterInputRestrict();
+        radioButtonTask();
+    }
+
+    /**
+     * Helper method to set toggle group for the radio buttons and update Guest Pass TextField according to selection
+     */
+    private void radioButtonTask() {
+        membershipToggleGroup = new ToggleGroup();
+        basicRadio.setToggleGroup(membershipToggleGroup);
+        familyRadio.setToggleGroup(membershipToggleGroup);
+        premiumRadio.setToggleGroup(membershipToggleGroup);
+
+        membershipToggleGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                RadioButton selectedButton = (RadioButton) newValue;
+                String radioButtonId = selectedButton.getId();
+
+                switch (radioButtonId) {
+                    case "basicRadio":
+                        guestPass_Member.setText("0");
+                        break;
+                    case "familyRadio":
+                        guestPass_Member.setText("1");
+                        break;
+                    case "premiumRadio":
+                        guestPass_Member.setText("3");
+                        break;
+                }
+            }
+        });
     }
 
     /**
      * Helper method to restrict the inputs of text fields to just alphabetical characters
      */
     private void characterInputRestrict() {
-        FName_Text.addEventFilter(KeyEvent.KEY_TYPED, keyEvent -> {
+        firstName_Member.addEventFilter(KeyEvent.KEY_TYPED, keyEvent -> {
             String typedChar = keyEvent.getCharacter();
             if (!typedChar.matches("[a-zA-Z]")) {
                 keyEvent.consume();
             }
         });
-        LName_Text.addEventFilter(KeyEvent.KEY_TYPED, keyEvent -> {
-            String typedChar = keyEvent.getCharacter();
-            if (!typedChar.matches("[a-zA-Z]")) {
-                keyEvent.consume();
-            }
-        });
-        FName_Cancel.addEventFilter(KeyEvent.KEY_TYPED, keyEvent -> {
-            String typedChar = keyEvent.getCharacter();
-            if (!typedChar.matches("[a-zA-Z]")) {
-                keyEvent.consume();
-            }
-        });
-        LName_Cancel.addEventFilter(KeyEvent.KEY_TYPED, keyEvent -> {
+        lastName_Member.addEventFilter(KeyEvent.KEY_TYPED, keyEvent -> {
             String typedChar = keyEvent.getCharacter();
             if (!typedChar.matches("[a-zA-Z]")) {
                 keyEvent.consume();
@@ -293,27 +300,27 @@ public class StudioManagerController {
     @FXML
     protected void onAddMemberButtonClick() {
         if (!loadMemberButton.isDisabled()) {
-            outputTextArea.appendText("Load the Members Before Adding a Member!\n");
+            outputTextAreaMember.appendText("Load the Members Before Adding a Member!\n");
             return;
         }
-        String firstName = FName_Text.getText().trim();
-        String lastName = LName_Text.getText().trim();
-        LocalDate dateOfBirth = DOB.getValue();
+        String firstName = firstName_Member.getText().trim();
+        String lastName = lastName_Member.getText().trim();
+        LocalDate dateOfBirth = DOB_Member.getValue();
         if (dateOfBirth == null) {
-            outputTextArea.appendText("Missing data tokens. Fill all required fields.\n");
+            outputTextAreaMember.appendText("Missing data tokens. Fill all required fields.\n");
             return;
         }
         String formattedDate = dateOfBirth.format(DateTimeFormatter.ofPattern("MM/dd/yyyy"));
         String membershipType = "";
-        if (basic.isSelected()) {
+        if (basicRadio.isSelected()) {
             membershipType = "Basic";
-        } else if (family.isSelected()) {
+        } else if (familyRadio.isSelected()) {
             membershipType = "Family";
-        } else if (premium.isSelected()) {
+        } else if (premiumRadio.isSelected()) {
             membershipType = "Premium";
         }
         if (membershipType.equals("")) {
-            outputTextArea.appendText("Missing data tokens. Fill all required fields.\n");
+            outputTextAreaMember.appendText("Missing data tokens. Fill all required fields.\n");
             return;
         }
         String studioLocation = studioLocationCombo.getValue();
@@ -324,7 +331,7 @@ public class StudioManagerController {
         parts[4] = studioLocation;
         for (int i = 1; i < parts.length; i++) {
             if (parts[i] == null || parts[i].trim().isEmpty()) {
-                outputTextArea.appendText("Missing data tokens. Fill all required fields.\n");
+                outputTextAreaMember.appendText("Missing data tokens. Fill all required fields.\n");
                 return;
             }
         }
@@ -401,12 +408,12 @@ public class StudioManagerController {
             File sourceFile = chooser.showOpenDialog(stage);
 
             memberList.load(sourceFile);
-            outputTextArea.appendText("Members list Loaded.\n");
+            outputTextAreaMember.appendText("Members list Loaded.\n");
 
             loadMemberButton.setDisable(true);
 
         } catch (RuntimeException | IOException e) {
-            outputTextArea.appendText("Error Loading File. Choose the correct file.\n");
+            outputTextAreaMember.appendText("Error Loading File. Choose the correct file.\n");
         }
     }
 
@@ -572,14 +579,14 @@ public class StudioManagerController {
     @FXML
     protected void onCancelButtonClick() {
         if (!loadMemberButton.isDisabled()) {
-            outputTextAreaCancel.appendText("Load the Members Before Removing a Member!\n");
+            outputTextAreaMember.appendText("Load the Members Before Removing a Member!\n");
             return;
         }
-        String firstName = FName_Cancel.getText().trim();
-        String lastName = LName_Cancel.getText().trim();
-        LocalDate dateOfBirth = DOB_Cancel.getValue();
+        String firstName = firstName_Member.getText().trim();
+        String lastName = lastName_Member.getText().trim();
+        LocalDate dateOfBirth = DOB_Member.getValue();
         if (dateOfBirth == null) {
-            outputTextAreaCancel.appendText("Missing data tokens. Fill all required fields.\n");
+            outputTextAreaMember.appendText("Missing data tokens. Fill all required fields.\n");
             return;
         }
         String formattedDate = dateOfBirth.format(DateTimeFormatter.ofPattern("MM/dd/yyyy"));
@@ -589,7 +596,7 @@ public class StudioManagerController {
         parts[3] = formattedDate;
         for (int i = 1; i < parts.length; i++) {
             if (parts[i] == null || parts[i].trim().isEmpty()) {
-                outputTextAreaCancel.appendText("Missing data tokens. Fill all required fields.\n");
+                outputTextAreaMember.appendText("Missing data tokens. Fill all required fields.\n");
                 return;
             }
         }
@@ -611,24 +618,24 @@ public class StudioManagerController {
         String studioLocationString = parts[ADD_MEMBERSHIP_STUDIO_INDEX];
 
         if (dob.isTodayOrFutureDate()) {
-            outputTextArea.appendText("DOB " + dob + ": cannot be today or a future date!\n");
+            outputTextAreaMember.appendText("DOB " + dob + ": cannot be today or a future date!\n");
             return;
         }
         if (dob.isLessThan18(dob)) {
-            outputTextArea.appendText("DOB " + dob + ": must be 18 or older to join!\n");
+            outputTextAreaMember.appendText("DOB " + dob + ": must be 18 or older to join!\n");
             return;
         }
         Location studioLocation = Location.valueOf(studioLocationString.toUpperCase());
 
         Profile newProfile = new Profile(firstName, lastName, dob);
         if (memberList.containsProfile(newProfile)) {
-            outputTextArea.appendText(firstName + " " + lastName + " is already in the member database.\n");
+            outputTextAreaMember.appendText(firstName + " " + lastName + " is already in the member database.\n");
             return;
         }
         Date expireDate = new Date().plusMonths(BASIC_EXPIRY_MONTH_LIMIT_INDEX);
         Member newMember = new Basic(newProfile, expireDate, studioLocation, BASIC_INITIAL_CLASSES);
         memberList.add(newMember);
-        outputTextArea.appendText(firstName + " " + lastName + " added.\n");
+        outputTextAreaMember.appendText(firstName + " " + lastName + " added.\n");
     }
 
     /**
@@ -646,24 +653,24 @@ public class StudioManagerController {
         String studioLocationString = parts[ADD_MEMBERSHIP_STUDIO_INDEX];
 
         if (dob.isTodayOrFutureDate()) {
-            outputTextArea.appendText("DOB " + dob + ": cannot be today or a future date!\n");
+            outputTextAreaMember.appendText("DOB " + dob + ": cannot be today or a future date!\n");
             return;
         }
         if (dob.isLessThan18(dob)) {
-            outputTextArea.appendText("DOB " + dob + ": must be 18 or older to join!\n");
+            outputTextAreaMember.appendText("DOB " + dob + ": must be 18 or older to join!\n");
             return;
         }
         Location studioLocation = Location.valueOf(studioLocationString.toUpperCase());
 
         Profile newProfile = new Profile(firstName, lastName, dob);
         if (memberList.containsProfile(newProfile)) {
-            outputTextArea.appendText(firstName + " " + lastName + " is already in the member database.\n");
+            outputTextAreaMember.appendText(firstName + " " + lastName + " is already in the member database.\n");
             return;
         }
         Date expireDate = new Date().plusMonths(FAMILY_EXPIRY_MONTH_LIMIT_INDEX);
         Member newMember = new Family(newProfile, expireDate, studioLocation, true);
         memberList.add(newMember);
-        outputTextArea.appendText(firstName + " " + lastName + " added.\n");
+        outputTextAreaMember.appendText(firstName + " " + lastName + " added.\n");
     }
 
     /**
@@ -681,24 +688,24 @@ public class StudioManagerController {
         String studioLocationString = parts[ADD_MEMBERSHIP_STUDIO_INDEX];
 
         if (dob.isTodayOrFutureDate()) {
-            outputTextArea.appendText("DOB " + dob + ": cannot be today or a future date!\n");
+            outputTextAreaMember.appendText("DOB " + dob + ": cannot be today or a future date!\n");
             return;
         }
         if (dob.isLessThan18(dob)) {
-            outputTextArea.appendText("DOB " + dob + ": must be 18 or older to join!\n");
+            outputTextAreaMember.appendText("DOB " + dob + ": must be 18 or older to join!\n");
             return;
         }
         Location studioLocation = Location.valueOf(studioLocationString.toUpperCase());
 
         Profile newProfile = new Profile(firstName, lastName, dob);
         if (memberList.containsProfile(newProfile)) {
-            outputTextArea.appendText(firstName + " " + lastName + " is already in the member database.\n");
+            outputTextAreaMember.appendText(firstName + " " + lastName + " is already in the member database.\n");
             return;
         }
         Date expireDate = new Date().plusYears(PREMIUM_EXPIRY_YEAR_LIMIT_INDEX);
         Member newMember = new Premium(newProfile, expireDate, studioLocation, PREMIUM_GUEST_PASS_LIMIT);
         memberList.add(newMember);
-        outputTextArea.appendText(firstName + " " + lastName + " added.\n");
+        outputTextAreaMember.appendText(firstName + " " + lastName + " added.\n");
     }
 
     /**
@@ -722,9 +729,9 @@ public class StudioManagerController {
             }
         }
         if (foundAndRemoved) {
-            outputTextAreaCancel.appendText(firstName + " " + lastName + " removed.\n");
+            outputTextAreaMember.appendText(firstName + " " + lastName + " removed.\n");
         } else {
-            outputTextAreaCancel.appendText(firstName + " " + lastName + " is not in the member database.\n");
+            outputTextAreaMember.appendText(firstName + " " + lastName + " is not in the member database.\n");
         }
     }
 
