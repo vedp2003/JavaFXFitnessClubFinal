@@ -755,18 +755,22 @@ public class StudioManagerController {
                     outputTextAreaPrint.appendText("[Guests]\n");
                     Member[] guests = fitnessClass.getGuests().getMembers();
                     for (int i = 0; i < guests.length; i++) {
-                        boolean alreadyPrinted = false;
-                        if (guests[i] == null || !(guests[i] instanceof Premium)) {
-                            continue;
-                        }
-                        for (int j = 0; j < i; j++) {
-                            if (guests[i].equals(guests[j])) {
-                                alreadyPrinted = true;
-                                break;
+                        if(guests[i] != null) {
+                            boolean alreadyPrinted = false;
+                            if (!(guests[i] instanceof Premium)) {
+                                outputTextAreaPrint.appendText("   " + guests[i] + "\n");
+                                continue;
                             }
-                        }
-                        if (!alreadyPrinted) {
-                            outputTextAreaPrint.appendText("   " + guests[i] + "\n");
+                            for (int j = 0; j < i; j++) {
+                                if (guests[i].equals(guests[j])) {
+                                    alreadyPrinted = true;
+                                    break;
+                                }
+                            }
+                            if (!alreadyPrinted) {
+                                outputTextAreaPrint.appendText("   " + guests[i] + "\n");
+                            }
+
                         }
                     }
                 }
