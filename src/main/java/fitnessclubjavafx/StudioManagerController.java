@@ -755,7 +755,7 @@ public class StudioManagerController {
                     outputTextAreaPrint.appendText("[Guests]\n");
                     Member[] guests = fitnessClass.getGuests().getMembers();
                     for (int i = 0; i < guests.length; i++) {
-                        if(guests[i] != null) {
+                        if (guests[i] != null) {
                             boolean alreadyPrinted = false;
                             if (!(guests[i] instanceof Premium)) {
                                 outputTextAreaPrint.appendText("   " + guests[i] + "\n");
