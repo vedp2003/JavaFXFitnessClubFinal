@@ -86,7 +86,7 @@ public class StudioManagerController {
     @FXML
     public TextArea outputTextAreaClass;
     @FXML
-    private Button LoadClasses_ID;
+    private Button LoadClassesButton;
     @FXML
     public TextArea outputTextAreaLoadClasses;
     @FXML
@@ -383,7 +383,7 @@ public class StudioManagerController {
             }
             tableClassSchedule.setItems(fitnessClasses);
             outputTextAreaLoadClasses.appendText("Class Schedule / Fitness classes Loaded.\n");
-            LoadClasses_ID.setDisable(true);
+            LoadClassesButton.setDisable(true);
 
         } catch (RuntimeException | IOException e) {
             outputTextAreaLoadClasses.appendText("Error Loading File. Choose the correct file.\n");
@@ -423,7 +423,7 @@ public class StudioManagerController {
      */
     @FXML
     protected void onAddMemberToClassButtonClick() {
-        if (!LoadClasses_ID.isDisabled()) {
+        if (!LoadClassesButton.isDisabled()) {
             outputTextAreaClass.appendText("Load the Classes Before Adding Member to Class!\n");
             return;
         }
@@ -461,7 +461,7 @@ public class StudioManagerController {
      */
     @FXML
     protected void onAddGuestToClassButtonClick() {
-        if (!LoadClasses_ID.isDisabled()) {
+        if (!LoadClassesButton.isDisabled()) {
             outputTextAreaClass.appendText("Load the Classes Before Adding Guests to Class!\n");
             return;
         }
@@ -499,7 +499,7 @@ public class StudioManagerController {
      */
     @FXML
     protected void onRemoveMemberFromClassButtonClick() {
-        if (!LoadClasses_ID.isDisabled()) {
+        if (!LoadClassesButton.isDisabled()) {
             outputTextAreaClass.appendText("Load the Classes Before!\n");
             return;
         }
@@ -538,7 +538,7 @@ public class StudioManagerController {
      */
     @FXML
     protected void onRemoveGuestFromClassButtonClick() {
-        if (!LoadClasses_ID.isDisabled()) {
+        if (!LoadClassesButton.isDisabled()) {
             outputTextAreaClass.appendText("Load the Classes Before!\n");
             return;
         }
