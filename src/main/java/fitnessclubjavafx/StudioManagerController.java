@@ -86,7 +86,7 @@ public class StudioManagerController {
     @FXML
     public TextArea outputTextAreaClass;
     @FXML
-    private Button LoadClassesButton;
+    private Button loadClassesButton;
     @FXML
     public TextArea outputTextAreaLoadClasses;
     @FXML
@@ -294,7 +294,7 @@ public class StudioManagerController {
     }
 
     /**
-     * Allows and calls another method for the addition of a member to the club upon button click.
+     * Allows for the addition of a member to the club upon button click.
      * Ensures all necessary user inputs are inputted before adding the member to the system.
      */
     @FXML
@@ -383,7 +383,7 @@ public class StudioManagerController {
             }
             tableClassSchedule.setItems(fitnessClasses);
             outputTextAreaLoadClasses.appendText("Class Schedule / Fitness classes Loaded.\n");
-            LoadClassesButton.setDisable(true);
+            loadClassesButton.setDisable(true);
 
         } catch (RuntimeException | IOException e) {
             outputTextAreaLoadClasses.appendText("Error Loading File. Choose the correct file.\n");
@@ -418,12 +418,12 @@ public class StudioManagerController {
     }
 
     /**
-     * Allows and calls another method for the addition of a member to a fitness class upon button click.
+     * Allows for the addition of a member to a fitness class upon button click.
      * Ensures all necessary user inputs are inputted before adding the member to the class.
      */
     @FXML
     protected void onAddMemberToClassButtonClick() {
-        if (!LoadClassesButton.isDisabled()) {
+        if (!loadClassesButton.isDisabled()) {
             outputTextAreaClass.appendText("Load the Classes Before Adding Member to Class!\n");
             return;
         }
@@ -460,12 +460,12 @@ public class StudioManagerController {
     }
 
     /**
-     * Allows and calls another method for the addition of a guest to a fitness class upon button click.
+     * Allows for the addition of a guest to a fitness class upon button click.
      * Ensures all necessary user inputs are inputted before adding the guest to the class.
      */
     @FXML
     protected void onAddGuestToClassButtonClick() {
-        if (!LoadClassesButton.isDisabled()) {
+        if (!loadClassesButton.isDisabled()) {
             outputTextAreaClass.appendText("Load the Classes Before Adding Guests to Class!\n");
             return;
         }
@@ -502,12 +502,12 @@ public class StudioManagerController {
     }
 
     /**
-     * Allows and calls another method for the removal of a member from a fitness class upon button click.
+     * Allows for the removal of a member from a fitness class upon button click.
      * Ensures all necessary user inputs are inputted before removing the member from the class.
      */
     @FXML
     protected void onRemoveMemberFromClassButtonClick() {
-        if (!LoadClassesButton.isDisabled()) {
+        if (!loadClassesButton.isDisabled()) {
             outputTextAreaClass.appendText("Load the Classes Before!\n");
             return;
         }
@@ -545,12 +545,12 @@ public class StudioManagerController {
     }
 
     /**
-     * Allows and calls another method for the removal of a guest from a fitness class upon button click.
+     * Allows for the removal of a guest from a fitness class upon button click.
      * Ensures all necessary user inputs are inputted before removing the guest from the class.
      */
     @FXML
     protected void onRemoveGuestFromClassButtonClick() {
-        if (!LoadClassesButton.isDisabled()) {
+        if (!loadClassesButton.isDisabled()) {
             outputTextAreaClass.appendText("Load the Classes Before!\n");
             return;
         }
@@ -588,8 +588,7 @@ public class StudioManagerController {
     }
 
     /**
-     * Allows and calls another method for the cancellation of a member's
-     * membership upon button click.
+     * Allows for the cancellation of a member's membership upon button click.
      * Ensures all necessary user inputs are inputted before removing the member from the system.
      */
     @FXML

@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"m":"fitnessclub.demoproj3","l":"fitnessclubjavafx"}];updateSearchResults();

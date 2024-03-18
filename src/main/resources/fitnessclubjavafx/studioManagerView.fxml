@@ -173,7 +173,7 @@
                             </columns>
                         </TableView>
                         <HBox spacing="14">
-                            <Button fx:id="LoadClassesButton" onAction="#onLoadClassesButtonClick" prefHeight="45.0"
+                            <Button fx:id="loadClassesButton" onAction="#onLoadClassesButtonClick" prefHeight="45.0"
                                     prefWidth="151.0" text="LOAD SCHEDULE" textFill="#ac14ed">
                                 <font>
                                     <Font name="Bell MT Bold" size="12.0"/>
