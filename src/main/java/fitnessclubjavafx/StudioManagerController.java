@@ -427,6 +427,10 @@ public class StudioManagerController {
             outputTextAreaClass.appendText("Load the Classes Before Adding Member to Class!\n");
             return;
         }
+        if (!loadMemberButton.isDisabled()) {
+            outputTextAreaClass.appendText("Load/Add Members Before Adding Member to Class!\n");
+            return;
+        }
         String classString = classTypeMemberClass.getValue();
         String instructorString = instructorMemberClass.getValue();
         String studioString = locationMemberClass.getValue();
@@ -463,6 +467,10 @@ public class StudioManagerController {
     protected void onAddGuestToClassButtonClick() {
         if (!LoadClassesButton.isDisabled()) {
             outputTextAreaClass.appendText("Load the Classes Before Adding Guests to Class!\n");
+            return;
+        }
+        if (!loadMemberButton.isDisabled()) {
+            outputTextAreaClass.appendText("Load/Add Members Before Adding Guests to Class!\n");
             return;
         }
         String classString = classTypeMemberClass.getValue();
@@ -503,6 +511,10 @@ public class StudioManagerController {
             outputTextAreaClass.appendText("Load the Classes Before!\n");
             return;
         }
+        if (!loadMemberButton.isDisabled()) {
+            outputTextAreaClass.appendText("Load/Add Members Before!\n");
+            return;
+        }
         String classString = classTypeMemberClass.getValue();
         String instructorString = instructorMemberClass.getValue();
         String studioString = locationMemberClass.getValue();
@@ -540,6 +552,10 @@ public class StudioManagerController {
     protected void onRemoveGuestFromClassButtonClick() {
         if (!LoadClassesButton.isDisabled()) {
             outputTextAreaClass.appendText("Load the Classes Before!\n");
+            return;
+        }
+        if (!loadMemberButton.isDisabled()) {
+            outputTextAreaClass.appendText("Load/Add Members Before!\n");
             return;
         }
         String classString = classTypeMemberClass.getValue();
