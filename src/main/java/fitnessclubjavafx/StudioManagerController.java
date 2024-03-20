@@ -60,8 +60,6 @@ public class StudioManagerController {
     @FXML
     private DatePicker DOB_Member;
     @FXML
-    public Button cancelButton;
-    @FXML
     private RadioButton basicRadio;
     @FXML
     private RadioButton familyRadio;
@@ -72,25 +70,25 @@ public class StudioManagerController {
     @FXML
     private Button loadMemberButton;
     @FXML
-    public ComboBox<String> classTypeMemberClass;
+    private ComboBox<String> classTypeMemberClass;
     @FXML
-    public ComboBox<String> instructorMemberClass;
+    private ComboBox<String> instructorMemberClass;
     @FXML
-    public ComboBox<String> locationMemberClass;
+    private ComboBox<String> locationMemberClass;
     @FXML
-    public TextField firstNameMemberClass;
+    private TextField firstNameMemberClass;
     @FXML
-    public TextField lastNameMemberClass;
+    private TextField lastNameMemberClass;
     @FXML
-    public DatePicker dobMemberClass;
+    private DatePicker dobMemberClass;
     @FXML
-    public TextArea outputTextAreaClass;
+    private TextArea outputTextAreaClass;
     @FXML
     private Button loadClassesButton;
     @FXML
-    public TextArea outputTextAreaLoadClasses;
+    private TextArea outputTextAreaLoadClasses;
     @FXML
-    public TextArea outputTextAreaPrint;
+    private TextArea outputTextAreaPrint;
     @FXML
     private ToggleGroup membershipToggleGroup;
     @FXML
